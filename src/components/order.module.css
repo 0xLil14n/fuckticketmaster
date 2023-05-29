@@ -1,0 +1,90 @@
+.container {
+  font-family: 'GT Walsheim Pro';
+
+  /* min-height: 500px; */
+  height: 100%;
+  width: 500px;
+  background: #3843d0;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  gap: 1rem;
+  border-radius: 0.5rem;
+}
+
+.button {
+  font-family: 'GT Walsheim Pro';
+  background: #a8ea63;
+  border: unset;
+  border-radius: 0.5rem;
+  color: #3843d0;
+  padding: 1rem;
+  cursor: pointer;
+}
+.button:disabled {
+  background: #c5d2e64e;
+  color: rgba(255, 255, 255, 0.504);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.row {
+  background: #c5d2e64e;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+}
+.selectedrow {
+  background: #baec84;
+  color: #3843d0;
+}
+
+.active {
+  opacity: 1;
+}
+.inactive {
+  opacity: 0;
+}
+.input {
+  background: rgba(255, 255, 255, 0.729);
+  border: unset;
+  height: 2rem;
+  border: 1px solid #baec84;
+  border-radius: 0.5rem;
+  width: 3rem;
+  padding: 0.25rem;
+  margin: 0 0.15rem;
+  color: #3843d0;
+}
+/* Chrome, Safari, Edge, Opera */
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.button:hover {
+  scale: 1.05;
+}
+
+/* Firefox */
+.input[type='number'] {
+  -moz-appearance: textfield;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+}
