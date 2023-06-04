@@ -1,0 +1,59 @@
+.container {
+  display: flex;
+  color: var(--good-blue);
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.851);
+  color: rgb(46, 42, 42);
+  width: 600px;
+  height: 300px;
+  border-radius: 0.5rem;
+}
+
+.img {
+  background: var(--good-green);
+  height: 100%;
+  width: 100%;
+  flex: 2;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.timeInfo {
+  display: flex;
+  color: var(--good-blue);
+  flex-direction: column;
+  padding: 1rem;
+  flex: 2;
+  gap: 0.5rem;
+  height: 180px;
+
+  align-items: flex-start;
+  justify-content: space-around;
+  /* background: blue; */
+}
+.artistInfo {
+  display: flex;
+  color: var(--good-blue);
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 1;
+  padding: 1rem;
+  /* background: blue; */
+  height: 100%;
+}
+.button {
+  padding: 0.5rem;
+  border: unset;
+  color: var(--good-green);
+  background: var(--good-blue);
+  font-family: 'GT Walsheim Pro';
+  font-weight: 500;
+  font-size: 0.8rem;
+  border-radius: 0.5rem;
+  width: 6rem;
+  height: 2rem;
+  cursor: pointer;
+}
+.button:hover {
+  scale: 1.1;
+}

@@ -14,18 +14,23 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
     
     uint public MAX_SUPPLY = 3;
     uint public MAX_PER_WALLET = 3;
+    uint256 private currentTokenId = 0;
 
-    
-    mapping(address => mapping(uint256 => uint256)) private tokenSalesPrices;
-    mapping(address => mapping(uint256 => uint256)) private soldFor;
-    mapping(string => uint256) public uuidToTokenId;
+    mapping(uint256 => address) public eventOwners;
+    mapping(uint256 => uint256) public tokenListPrices;
+    mapping(uint256 => uint256) public maxSupply;
+    mapping(address => mapping(uint256 => uint256)) public tokenResalePrices;
+    mapping(address => mapping(uint256 => uint256)) soldFor;
+    mapping(string => uint256) public uuidToTicketId;
     mapping(address => uint256) private purchasesPerWallet;
 
     mapping(address => mapping(uint256 => uint256)) public numTokensForSale;
 
-    event TicketResold(address indexed from, address indexed to, uint256 indexed tokenId);
+    event TicketCreated(uint256 indexed ticketId, address indexed owner, uint256 ticketSupply, uint256 priceInWei, string eventName, string date, string venueName);
+    event TicketResold(address indexed from, address indexed to, uint256 indexed tokenId, uint256 amount);
     event RoyaltyDisbursed(address indexed owner, uint256 tokenId, uint256 profit);
-    event TicketSold(address indexed owner, uint256 tokenId, string indexed ticketId, uint256 quantity);
+    event TicketSold(address indexed owner, uint256 ticketId, uint256 quantity);
+    event TokenListedForSale(address indexed owner, uint256 indexed tokenId, uint256 price, uint256 amount);
 
     constructor(
         address[] memory _owners, 
@@ -35,19 +40,11 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
         PaymentSplitter(_owners, _shares)
     {}
 
-    function setURI(string memory newuri) public onlyOwner {
-        _setURI(newuri);
-    }
-
-    function uri(uint256 _id) public view virtual override returns (string memory) {
-        require(exists(_id), "URI: nonexistent token");
-
-        return string(abi.encodePacked(super.uri(_id), Strings.toString(_id)));
-    }
     function mint(uint256 id, uint256 amount, uint256 price) internal {
-        require(totalSupply(id) + amount <= MAX_SUPPLY, "Maximum supply already reached");
-        require(purchasesPerWallet[msg.sender] < MAX_PER_WALLET, "Wallet purchase limit reached");
-        require(msg.value == price * amount, "Insufficient funds");
+        require(eventOwners[id] != 0x0000000000000000000000000000000000000000, "Invalid id. Does not exist");
+        require(totalSupply(id) + amount <= maxSupply[id], "Maximum supply already reached");
+        // require(purchasesPerWallet[msg.sender] < MAX_PER_WALLET, "Wallet purchase limit reached");
+        require(msg.value >= price * amount, "Insufficient funds");
 
         purchasesPerWallet[msg.sender] += 1;
 
@@ -55,20 +52,24 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
         soldFor[msg.sender][id] = price;
     }
 
-    function addUuid(string memory uuid, uint256 tokenId) public {
-        uuidToTokenId[uuid] = tokenId;
+    function createTicket(uint256 ticketSupply, uint256 priceInWei, string memory eventName, string memory date, string memory venueName) public {
+        require(ticketSupply > 0, "Invalid ticketSupply. Ticket supply must be greater than zero");
+        require(priceInWei > 0, "Invalid price. Price must be greater than zero");
+        uint256 ticketId = currentTokenId + 1;
+        currentTokenId = ticketId;
+        maxSupply[ticketId] = ticketSupply;
+        tokenListPrices[ticketId] = priceInWei;
+        eventOwners[ticketId] = msg.sender;
+        emit TicketCreated(ticketId, msg.sender, ticketSupply, priceInWei, eventName, date, venueName);
     }
 
-    function publicMint(string memory uuid, uint256 amount)
+    function publicMint(uint256 ticketId, uint256 amount)
         public
         payable
     {
-        
-        uint256 id = uuidToTokenId[uuid];
 
-        mint(id, amount, publicPrice);
-// event TicketSold(address indexed owner, uint256 tokenId, string indexed ticketId, uint256 quantity);
-        emit TicketSold(msg.sender, id, uuid, amount);
+        mint(ticketId, amount, publicPrice);
+        emit TicketSold(msg.sender, ticketId, amount);
     }
 
     function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
@@ -85,38 +86,42 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
 
-    function setSalesPrice(uint256 tokenId, uint256 price, uint256 amount) public {
+    function setSalesPrice(uint256 ticketId, uint256 price, uint256 amount) public {
         require(price > 0, "Invalid price");
         require(amount > 0, "Invalid amount");
-        require(balanceOf(msg.sender, tokenId) >= amount, "Invalid qty. Not enough tokens");
-        tokenSalesPrices[msg.sender][tokenId] = price;
-        numTokensForSale[msg.sender][tokenId] = amount;
+        require(balanceOf(msg.sender, ticketId) >= amount, "Invalid qty. Not enough tokens");
+        require(eventOwners[ticketId] != msg.sender, "Wallets are only allowed 1 listing per event.");
+        tokenResalePrices[msg.sender][ticketId] = price;
+        numTokensForSale[msg.sender][ticketId] = amount;
+        emit TokenListedForSale(msg.sender, ticketId, price, amount);
         // TODO emit event here
     }
 
-    function buyResoldToken(address tokenOwner, uint256 tokenId, uint256 amount) public payable {
-        uint256 salesPrice = tokenSalesPrices[tokenOwner][tokenId];
+    function buyResoldToken(address tokenOwner, uint256 ticketId, uint256 amount) public payable {
+        uint256 salesPrice = tokenResalePrices[tokenOwner][ticketId];
 
         require(salesPrice > 0, "Token not for sale");
         require(amount > 0, "Must be valid amount");
-        require(balanceOf(tokenOwner, tokenId) >= amount, "Not enough tokens available");
+        require(balanceOf(tokenOwner, ticketId) >= amount, "Not enough tokens available");
         require(msg.value >= salesPrice * amount, "Insufficient payment");
-        require(numTokensForSale[tokenOwner][tokenId] >= amount, "Not enough tokens available for sale");
+        require(numTokensForSale[tokenOwner][ticketId] >= amount, "Not enough tokens available for sale");
         
         // Transfer the token to the buyer
-        _safeTransferFrom(tokenOwner, msg.sender, tokenId, amount, "");
+        _safeTransferFrom(tokenOwner, msg.sender, ticketId, amount, "");
         // Transfer the payment to the token owner
         payable(tokenOwner).transfer(salesPrice * amount);
-        numTokensForSale[tokenOwner][tokenId] -= amount;
-        tokenSalesPrices[tokenOwner][tokenId] = 0;
+        numTokensForSale[tokenOwner][ticketId] -= amount;
+        if(numTokensForSale[tokenOwner][ticketId] == 0) {
+            tokenResalePrices[tokenOwner][ticketId] = 0;
+        }
 
         // emit TokenResold()
-        emit TicketResold(tokenOwner, msg.sender, tokenId);
+        emit TicketResold(tokenOwner, msg.sender, ticketId, amount);
 
-        uint256 profit = salesPrice - soldFor[tokenOwner][tokenId];
+        uint256 profit = salesPrice - tokenListPrices[ticketId];
         if (profit > 0) {
-            payable(owner()).transfer(profit);
-            emit RoyaltyDisbursed(owner(), profit, tokenId);
+            payable(eventOwners[ticketId]).transfer(profit);
+            emit RoyaltyDisbursed(owner(), profit, ticketId);
         }
         
     }

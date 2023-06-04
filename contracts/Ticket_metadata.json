@@ -177,6 +177,55 @@
         "inputs": [
           {
             "indexed": true,
+            "internalType": "uint256",
+            "name": "ticketId",
+            "type": "uint256"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "ticketSupply",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "priceInWei",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "eventName",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "date",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "venueName",
+            "type": "string"
+          }
+        ],
+        "name": "TicketCreated",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
             "internalType": "address",
             "name": "from",
             "type": "address"
@@ -215,14 +264,8 @@
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          },
-          {
-            "indexed": true,
-            "internalType": "string",
             "name": "ticketId",
-            "type": "string"
+            "type": "uint256"
           },
           {
             "indexed": false,
@@ -387,24 +430,6 @@
       {
         "inputs": [
           {
-            "internalType": "string",
-            "name": "uuid",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "tokenId",
-            "type": "uint256"
-          }
-        ],
-        "name": "addUuid",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "address",
             "name": "account",
             "type": "address"
@@ -459,7 +484,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "tokenId",
+            "name": "ticketId",
             "type": "uint256"
           },
           {
@@ -471,6 +496,58 @@
         "name": "buyResoldToken",
         "outputs": [],
         "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "ticketSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "priceInWei",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "eventName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "date",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "venueName",
+            "type": "string"
+          }
+        ],
+        "name": "createTicket",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "eventOwners",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -603,9 +680,9 @@
       {
         "inputs": [
           {
-            "internalType": "string",
-            "name": "uuid",
-            "type": "string"
+            "internalType": "uint256",
+            "name": "ticketId",
+            "type": "uint256"
           },
           {
             "internalType": "uint256",
@@ -843,7 +920,7 @@
         "inputs": [
           {
             "internalType": "uint256",
-            "name": "tokenId",
+            "name": "ticketId",
             "type": "uint256"
           },
           {
@@ -858,19 +935,6 @@
           }
         ],
         "name": "setSalesPrice",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "newuri",
-            "type": "string"
-          }
-        ],
-        "name": "setURI",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -897,6 +961,25 @@
       {
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "supplyLeft",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "bytes4",
             "name": "interfaceId",
             "type": "bytes4"
@@ -908,6 +991,49 @@
             "internalType": "bool",
             "name": "",
             "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "tokenListPrices",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "tokenResalePrices",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -994,7 +1120,7 @@
         "inputs": [
           {
             "internalType": "uint256",
-            "name": "_id",
+            "name": "",
             "type": "uint256"
           }
         ],
@@ -1004,25 +1130,6 @@
             "internalType": "string",
             "name": "",
             "type": "string"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "string",
-            "name": "",
-            "type": "string"
-          }
-        ],
-        "name": "uuidToTokenId",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "stateMutability": "view",
@@ -1118,6 +1225,9 @@
         },
         "transferOwnership(address)": {
           "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+        },
+        "uri(uint256)": {
+          "details": "See {IERC1155MetadataURI-uri}. This implementation returns the same URI for *all* token types. It relies on the token type ID substitution mechanism https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP]. Clients calling this function must replace the `\\{id\\}` substring with the actual token type ID."
         }
       },
       "version": 1
@@ -1281,11 +1391,11 @@
       ]
     },
     "contract-9d8b91b7db.sol": {
-      "keccak256": "0x28ff4332e63859db51d789ec141e781a9bb76d5c7227e4f38fd7aed823cb11d2",
+      "keccak256": "0x07a4b5c0ea948fb02cd4f0536bd38dbc462f812545449418290b4191fbd0e608",
       "license": "MIT",
       "urls": [
-        "bzz-raw://2076e8a25f0425f658b0eff2a46bc2518922994b684a8bdcd9b0ebd8a3f081b9",
-        "dweb:/ipfs/Qmdnqd5yx4G6xZ4omrBLMfnqnmKCBvUPZNqH3YJJynRBGo"
+        "bzz-raw://e10556d7b19cb0177f966f91045d7e0ee6187573cd257c09ee98646e4e52cabd",
+        "dweb:/ipfs/QmVRpbdjQrvP5hekmFMgf2EvCdYSRFyukM6CPQZNsBxb4o"
       ]
     }
   },

@@ -21,7 +21,7 @@ const query = gql`
       id
       tickets {
         id
-        quantity
+
         ticketId
       }
     }
@@ -34,8 +34,7 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
   const { data, loading } = useQuery(query, {
     variables: { userId: address?.toLowerCase() },
   });
-  console.log('tiiiickets', data);
-  //   const [tickets, setTickets] = useState<any[]>([]);
+
   const [aggTix, setAggTickets] = useState<Record<string, Ticket[]>>({});
   useEffect(() => {
     (async () => {
@@ -48,8 +47,8 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
       const tix = await res.json();
 
       const aggTickets: Record<string, Ticket[]> = (
-        tix.tickets as Ticket[]
-      ).reduce((acc: Record<string, Ticket[]>, ticket) => {
+        data?.user?.tickets ?? []
+      ).reduce((acc: Record<string, Ticket[]>, ticket: Ticket) => {
         if (acc[ticket.ticketId]) {
           acc[ticket.ticketId] = [...acc[ticket.ticketId], ticket];
         } else {
@@ -57,12 +56,13 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
         }
         return acc;
       }, {});
+      console.log('aggtix', []);
 
       setAggTickets(aggTickets);
 
       Object.entries(aggTickets).map((k, v) => console.log('mapppp', k, v));
     })();
-  }, [address]);
+  }, [address, data?.user]);
   if (!session) {
     return <>Please log in</>;
   }
@@ -73,12 +73,9 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
     <div style={{ height: '100%' }}>
       order history
       <OrderHistoryContainer>
-        {/* {Object.entries(aggTix).map(([k, v]) => {
-          return <Order id={k} tickets={v} key={k} />;
-        })} */}
-        {(data?.user?.tickets as Ticket2[]).map((t) => (
-          <Order id={t.ticketId} quantity={t.quantity} />
-        ))}
+        {Object.entries(aggTix).map(([k, v]) => {
+          return <Order id={k} quantity={v.length} key={k} />;
+        })}
       </OrderHistoryContainer>
     </div>
   );

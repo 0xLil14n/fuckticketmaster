@@ -20,19 +20,20 @@ type Props = {
   quantity: number;
 };
 
-const Order: React.FC<Props> = ({ id, quantity }) => {
+const Order: React.FC<Props> = ({ id: tokenId, quantity }) => {
   const [selected, setSelected] = useState<number[]>([]);
   const [flipped, setFlipped] = useState(false);
   const [resalePrice, setResalePrice] = useState<number>(0);
   const [resalePriceEth, setResalePriceEth] = useState<number>(0);
 
-  const { data, isError } = useContractRead({
-    address: SEPOLIA_ADDR,
-    abi: ABI,
-    functionName: 'uuidToTokenId',
-    args: [id],
-  });
-  const tokenId = parseInt(data as string);
+  //   const { data, isError } = useContractRead({
+  //     address: SEPOLIA_ADDR,
+  //     abi: ABI,
+  //     functionName: 'uuidToTokenId',
+  //     args: [id],
+  //   });
+  //   const tokenId = parseInt(data as string);
+  console.log('tokenId', tokenId);
   const a = [...new Array(parseInt(quantity.toString())).keys()];
   console.log('a', a);
   const {
@@ -73,7 +74,7 @@ const Order: React.FC<Props> = ({ id, quantity }) => {
 
   return (
     <div className={styles.container}>
-      <div>ticket: {id}</div>
+      <div>ticketId: [{tokenId}]</div>
 
       <FlipCard>
         <FrontCard isCardFlipped={flipped}>

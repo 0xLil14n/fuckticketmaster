@@ -88,9 +88,6 @@
   justify-content: flex-end;
 }
 
-.navItem {
-}
-
 .navItem:hover {
   color: #b0e212;
   transform: scale(1.05);

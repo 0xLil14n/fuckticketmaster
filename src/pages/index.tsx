@@ -17,7 +17,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={`${styles.main} ${styles.description}`}></main>
+      <main className={`${styles.main} ${styles.description}`}>
+        <div>
+          <h1>fuckticketmaster</h1>
+        </div>
+      </main>
     </>
   );
 }

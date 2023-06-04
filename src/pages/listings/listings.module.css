@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.listingContainer {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid gray;
+  padding: 1rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+.summarycontainer {
+  display: flex;
+  gap: 1rem;
+}
+.box {
+  border: 1px solid gray;
+  padding: 1rem;
+  border-radius: 0.2rem;
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--good-green);
+}
+.p {
+  font-size: 0.7rem;
+  border-top: 1px solid gray;
+  padding-top: 0.4rem;
+}
+.number {
+  /* margin: 0.5rem; */
+}

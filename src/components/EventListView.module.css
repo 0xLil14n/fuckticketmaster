@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  padding: 1rem;
+  width: 700px;
+  border-bottom: 1px solid gray;
+}
+
+.details {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+}
+.linkButton {
+  flex: 1;
+  background: black;
+  border: 1px solid white;
+  cursor: pointer;
+}
+.linkButton:hover {
+  background: #b0e212;
+  border: 1px solid black;
+  color: black;
+}

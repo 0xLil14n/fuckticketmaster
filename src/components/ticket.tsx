@@ -10,27 +10,51 @@ import {
 
 import { ethers } from 'ethers';
 import FlipCard, { BackCard, FrontCard } from './card';
-import { watchContractEvent } from '@wagmi/core';
 import { ABI, SEPOLIA_ADDR } from '../../contractdetails';
+import { gql, useQuery } from '@apollo/client';
+import useGetPriceInUsd from '@/hooks/useGetPriceInUsd';
 
 type Props = {
-  ticketId: string;
+  ticketId: number;
+  isResale: boolean;
 };
-const Ticket: React.FC<Props> = ({ ticketId }) => {
+
+const eventsQuery = gql`
+  query EventsQuery($eventId: String!) {
+    event(id: $eventId) {
+      eventName
+      date
+      id
+      venueName
+      eventOwner {
+        id
+      }
+    }
+  }
+`;
+const Ticket: React.FC<Props> = ({ ticketId, isResale }) => {
+  const { data: eventsData, loading } = useQuery(eventsQuery, {
+    variables: { eventId: ticketId.toString() },
+  });
+  const getPriceInUsd = useGetPriceInUsd();
   const [qty, setQty] = useState(1);
   const { data } = useContractRead({
     address: SEPOLIA_ADDR,
     abi: ABI,
-    functionName: 'publicPrice',
+    functionName: 'tokenListPrices',
+    args: [BigInt(ticketId)],
+    onError(error) {
+      console.log('error', error);
+    },
   });
-  const account = useAccount();
 
   const [totalPrice, setTotalPrice] = useState<BigInt>(BigInt(0));
+
   const {
     data: mintData,
     isLoading: isMintLoading,
     isSuccess: isMintStarted,
-    write,
+    write: purchaseTicket,
     isError: isMintError,
   } = useContractWrite({
     address: SEPOLIA_ADDR,
@@ -39,9 +63,14 @@ const Ticket: React.FC<Props> = ({ ticketId }) => {
     args: [ticketId, qty],
   });
 
-  let wei = data ? data : 0;
-  const ethPrice = ethers.utils.formatEther(wei as ethers.BigNumberish);
-  const [price, setPrice] = useState('0.00');
+  let wei = data ? data : BigInt(0);
+
+  const priceInUsd = getPriceInUsd(wei as ethers.BigNumberish);
+
+  const [price, setPrice] = useState(priceInUsd);
+  useEffect(() => {
+    setPrice(priceInUsd);
+  }, [priceInUsd]);
 
   const { isSuccess: txSuccess } = useWaitForTransaction({
     hash: mintData?.hash,
@@ -49,33 +78,9 @@ const Ticket: React.FC<Props> = ({ ticketId }) => {
 
   const isMinted = txSuccess;
 
-  const unwatch = watchContractEvent(
-    {
-      address: SEPOLIA_ADDR,
-      abi: ABI,
-      eventName: 'TicketSold',
-    },
-
-    (log) => {
-      console.log('ticket sold', log);
-    }
-  );
-  useEffect(() => {
-    (async () => {
-      const data = await fetch('/api/fetchUsd');
-      const res = await data.json();
-
-      const p = (res.data.ethusd * parseFloat(ethPrice)).toFixed(2);
-      setPrice(p);
-    })();
-    return () => {
-      unwatch();
-    };
-  }, []);
-
   useEffect(() => {
     setTotalPrice((wei as bigint) * BigInt(qty));
-  }, [qty, price]);
+  }, [qty, price, wei]);
 
   return (
     <section className={styles.container}>
@@ -83,8 +88,12 @@ const Ticket: React.FC<Props> = ({ ticketId }) => {
         <FrontCard isCardFlipped={isMinted}>
           <div className={` ${styles.ticketcontainer} ${styles.ticket}`}>
             <div className={styles.ticketTitle}>
-              <h2>General Admission</h2>
+              <h1>{eventsData?.event.eventName}</h1>
+              <h2>{eventsData?.event.venueName}</h2>
+              <h2>{eventsData?.event.date}</h2>
+
               <h3>${price}/ticket</h3>
+              {isResale && <p>certified resale</p>}
             </div>
 
             <form className={styles.form}>
@@ -113,21 +122,9 @@ const Ticket: React.FC<Props> = ({ ticketId }) => {
                 onClick={async (e) => {
                   e.preventDefault();
 
-                  write?.({
-                    value: totalPrice as BigInt,
+                  purchaseTicket?.({
+                    value: totalPrice as bigint,
                   });
-                  const res = await fetch('/api/reserveTicket', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      qty,
-                      ticketId: ticketId.toString(),
-                      address: account?.address,
-                    }),
-                  });
-                  const r = await res.json();
                 }}
                 className={styles.button}
                 data-mint-loading={isMintLoading}

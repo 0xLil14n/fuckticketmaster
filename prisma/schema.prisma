@@ -11,27 +11,22 @@ datasource db {
 }
 
 model Event {
-  id     String   @id @default(uuid())
-  Ticket Ticket[]
+  id         String   @id @default(uuid())
+  eventName  String
+  city       String
+  state      String
+  eventOwner String
+  date       DateTime
+  Ticket     Ticket[]
 }
 
 model Ticket {
-  id           String         @id @default(uuid())
-  onChainId    Int            @default(autoincrement())
-  event        Event          @relation(fields: [eventId], references: [id])
-  eventId      String         @map("event_id")
-  TicketOption TicketOption[]
-  section      String?
-  row          String?
-  supplyLeft   Int
+  id         Int     @id @default(autoincrement())
+  event      Event   @relation(fields: [eventId], references: [id])
+  eventId    String  @map("event_id")
+  section    String?
+  row        String?
+  supplyLeft Int
 
   @@map("tickets")
-}
-
-model TicketOption {
-  id       String  @id @default(uuid())
-  ticket   Ticket  @relation(fields: [ticketId], references: [id])
-  ticketId String  @map("ticket_id")
-  walletId String
-  seat     String?
 }
