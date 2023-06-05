@@ -1,0 +1,51 @@
+.tabs {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem;
+  cursor: pointer;
+}
+.container {
+  width: 100%;
+}
+.tabActive {
+  border-bottom: 1px solid var(--good-green);
+  padding-bottom: 0.5rem;
+
+  color: var(--good-green);
+}
+.purchaseHistory {
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+.purchaseRow {
+  background: black;
+  padding: 1.2rem;
+  height: 120px;
+  border-radius: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+.stack p {
+  color: var(--good-green);
+}
+.arrow {
+  font-size: 2rem;
+}
+.viewTicketDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  cursor: pointer;
+}
+.row {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  /* background: red; */
+}

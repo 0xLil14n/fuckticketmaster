@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import styles from './RadioRow.module.css';
+import RadioRowView from './Radio/RadioRowView';
 
 const RadioRow: React.FC<{
   radioId: string;
   id: number;
-  listingId: string;
+
   label: string;
   isChecked: boolean;
-  handleChecked: (_: number, listingId: string) => void;
+  handleChecked: (_: number) => void;
   price: string;
   listedBy: string;
   key: number;
 }> = ({
-  listingId,
   id,
   label,
   isChecked,
@@ -23,17 +23,12 @@ const RadioRow: React.FC<{
   radioId,
 }) => {
   return (
-    <div
-      onClick={() => handleChecked(id, listingId)}
-      className={`${styles.radio} ${isChecked ? styles.radioactive : ''}`}
+    <RadioRowView
+      label={label}
+      isChecked={isChecked}
+      radioId={radioId}
+      onClick={() => handleChecked(id)}
     >
-      <input
-        className={styles.radiobutton}
-        type="radio"
-        name={radioId}
-        id={label}
-        checked={isChecked}
-      />
       <label className={styles.label}>
         <h2>{price}</h2>
         <div>
@@ -48,7 +43,7 @@ const RadioRow: React.FC<{
           </Link>
         </div>
       </label>
-    </div>
+    </RadioRowView>
   );
 };
 export default RadioRow;

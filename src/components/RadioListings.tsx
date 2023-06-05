@@ -14,7 +14,7 @@ const RadioListings: React.FC<{
   }, []);
 
   const [checked, setChecked] = useState(0);
-  const handleChecked = (id: number, listingId: string) => {
+  const handleChecked = (listingId: string) => (id: number) => {
     setChecked(id);
     setSelectedListingId(listingId);
   };
@@ -23,12 +23,11 @@ const RadioListings: React.FC<{
       {listings.map((l: Listing, i) => (
         <RadioRow
           id={i}
-          listingId={l.id}
           key={i}
           radioId="asdf"
           label="asdf"
           isChecked={i == checked}
-          handleChecked={handleChecked}
+          handleChecked={handleChecked(l.id)}
           listedBy={l.listedBy.id}
           price={`$${getPriceInUsd(l.priceInWei)}`}
         />

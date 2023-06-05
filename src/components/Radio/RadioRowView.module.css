@@ -1,0 +1,28 @@
+.radiobutton {
+  background: var(--good-green);
+  border-color: var(--good-green);
+  accent-color: var(--good-green);
+}
+.radio {
+  background: black;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.radioactive {
+  border: 1px solid var(--good-green);
+}
+
+.label {
+  display: flex;
+  gap: 1rem;
+
+  align-items: center;
+}
+.titleHighlight {
+  color: var(--good-green);
+}
