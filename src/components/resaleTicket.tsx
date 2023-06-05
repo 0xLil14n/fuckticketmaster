@@ -37,7 +37,6 @@ const ResaleTicket: React.FC<Props> = ({ listing }) => {
   const { data: eventsData, loading: isEventsLoading } = useQuery(eventsQuery, {
     variables: { ticketId },
   });
-  console.log('resaleticket', eventsData, ticketId);
 
   const [qty, setQty] = useState(1);
   const {

@@ -9,25 +9,7 @@ import RadioListings from '@/components/RadioListings';
 import EventDetailsHeader from '@/components/EventDetailsHeader';
 
 import PurchaseSummary from '@/components/PurchaseSummary';
-
-const eventListingsQuery = gql`
-  query EventsQuery($eventId: String!) {
-    event(id: $eventId) {
-      eventName
-      date
-      venueName
-      id
-      listings {
-        id
-        listedBy {
-          id
-        }
-        isResale
-        priceInWei
-      }
-    }
-  }
-`;
+import useGetEventInfo from '@/hooks/useGetEventInfo';
 
 const DetailsView = () => {
   const router = useRouter();
@@ -35,10 +17,8 @@ const DetailsView = () => {
   const { data: session } = useSession();
   const getPriceInUsd = useGetPriceInUsd();
   const [selectedListingId, setSelectedListingId] = useState('');
-  const { data: eventData, loading } = useQuery(eventListingsQuery, {
-    variables: { eventId: ticketId.toString() },
-  });
 
+  const { data: eventData, loading } = useGetEventInfo(ticketId.toString());
   if (Number.isNaN(ticketId)) {
     return <div>404 page not found</div>;
   }
@@ -77,14 +57,16 @@ const DetailsView = () => {
             )}
           </div>
           <div className={styles.second}>
-            <PurchaseSummary
-              priceWei={selectedListing?.priceInWei ?? BigInt(0)}
-              priceUsd={`${price}` ?? '0'}
-              ticketId={ticketId}
-              isResale={Boolean(selectedListing?.isResale)}
-              listedById={selectedListing?.listedBy.id ?? ''}
-              originalTicketPriceUsd={originalTicketPriceUsd}
-            />
+            {selectedListing && (
+              <PurchaseSummary
+                priceWei={selectedListing?.priceInWei ?? BigInt(0)}
+                priceUsd={`${price}` ?? '0'}
+                ticketId={ticketId}
+                isResale={Boolean(selectedListing?.isResale)}
+                listedById={selectedListing?.listedBy.id ?? ''}
+                originalTicketPriceUsd={originalTicketPriceUsd}
+              />
+            )}
           </div>
         </div>
       </div>

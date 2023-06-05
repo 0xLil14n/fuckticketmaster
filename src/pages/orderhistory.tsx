@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import client from '../../apolloclient';
 import { gql, useQuery } from '@apollo/client';
+import PurchaseHistory from '@/components/PurchaseHistory';
 
 type Ticket2 = {
   ticketId: string;
@@ -21,7 +22,6 @@ const query = gql`
       id
       tickets {
         id
-
         ticketId
       }
     }
@@ -34,34 +34,31 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
   const { data, loading } = useQuery(query, {
     variables: { userId: address?.toLowerCase() },
   });
+  const ticketIds = [
+    ...(data?.user?.tickets ?? []).reduce(
+      (acc: Set<string>, curr: Ticket2) => acc.add(curr.ticketId),
+      new Set()
+    ),
+  ];
+  console.log('ticketIds', ticketIds);
 
   const [aggTix, setAggTickets] = useState<Record<string, Ticket[]>>({});
   useEffect(() => {
-    (async () => {
-      const res = await fetch('/api/orderhistory', {
-        method: 'POST',
-        body: JSON.stringify({
-          address,
-        }),
-      });
-      const tix = await res.json();
+    const aggTickets: Record<string, Ticket[]> = (
+      data?.user?.tickets ?? []
+    ).reduce((acc: Record<string, Ticket[]>, ticket: Ticket) => {
+      if (acc[ticket.ticketId]) {
+        acc[ticket.ticketId] = [...acc[ticket.ticketId], ticket];
+      } else {
+        acc[ticket.ticketId] = [ticket];
+      }
+      return acc;
+    }, {});
+    console.log('aggtix', []);
 
-      const aggTickets: Record<string, Ticket[]> = (
-        data?.user?.tickets ?? []
-      ).reduce((acc: Record<string, Ticket[]>, ticket: Ticket) => {
-        if (acc[ticket.ticketId]) {
-          acc[ticket.ticketId] = [...acc[ticket.ticketId], ticket];
-        } else {
-          acc[ticket.ticketId] = [ticket];
-        }
-        return acc;
-      }, {});
-      console.log('aggtix', []);
+    setAggTickets(aggTickets);
 
-      setAggTickets(aggTickets);
-
-      Object.entries(aggTickets).map((k, v) => console.log('mapppp', k, v));
-    })();
+    Object.entries(aggTickets).map((k, v) => console.log('mapppp', k, v));
   }, [address, data?.user]);
   if (!session) {
     return <>Please log in</>;
@@ -70,13 +67,13 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
     return <div>loading</div>;
   }
   return (
-    <div style={{ height: '100%' }}>
-      order history
-      <OrderHistoryContainer>
-        {Object.entries(aggTix).map(([k, v]) => {
+    <div style={{ height: '100%', width: '900px' }}>
+      {/* <OrderHistoryContainer> */}
+      {/* {Object.entries(aggTix).map(([k, v]) => {
           return <Order id={k} quantity={v.length} key={k} />;
-        })}
-      </OrderHistoryContainer>
+        })} */}
+      <PurchaseHistory ticketIds={ticketIds} />
+      {/* </OrderHistoryContainer> */}
     </div>
   );
 };

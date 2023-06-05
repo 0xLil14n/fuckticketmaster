@@ -1,6 +1,7 @@
 .container {
   width: 100%;
-  border: 1px solid var(--good-green);
+  border: 1px solid #303030;
+  box-shadow: 0 0 #303030;
   border-radius: 0.5rem;
   padding: 1rem;
   background: black;
@@ -15,7 +16,6 @@
 }
 .lineItemContainer p {
   font-size: 0.875rem;
-  /* color: rgba(255, 255, 255, 0.777); */
 }
 .stack {
   display: flex;

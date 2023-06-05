@@ -103,7 +103,6 @@ const PurchaseSummary: React.FC<{
           />
           <div className={styles.line} />
           <LineItem label="Artist takehome" price={artistTakehome.toFixed(2)} />
-          {/* <LineItem label="FTM Resale Fee" price={'7,00'} /> */}
           <LineItem
             label="Reseller takehome"
             price={artistTakehome.toFixed(2)}
