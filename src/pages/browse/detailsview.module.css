@@ -1,37 +1,15 @@
 .container {
-  background: #161616;
-  border: 1px solid gray;
   border-radius: 0.5rem;
-  padding: 1rem;
-  width: 900px;
+  width: 1200px;
   display: flex;
-  /* justify-content: center; */
   align-items: flex-start;
   flex-direction: column;
-  gap: 1rem;
-}
-.container p {
-  color: gray;
-}
-.titleHighlight {
-  color: var(--good-green);
-}
-.radiobutton {
-  background: var(--good-green);
-  border-color: var(--good-green);
-  accent-color: var(--good-green);
-}
-.radio {
-  background: black;
-  padding: 1rem;
-  width: 100%;
-  display: flex;
-  gap: 0.5rem;
-  border-radius: 5px;
+  gap: 0.2rem;
+  margin-top: 3rem;
 }
 
-.radioactive {
-  border: 1px solid var(--good-green);
+.titleHighlight {
+  color: var(--good-green);
 }
 
 .width100 {
@@ -43,6 +21,24 @@
 .label {
   display: flex;
   gap: 1rem;
-  /* justify-content: baseline; */
+
   align-items: center;
+}
+.listingContainer {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  background: #161616;
+  padding: 2rem;
+}
+.listingContainer p {
+}
+.first {
+  flex: 2;
+}
+.first p {
+  color: gray;
+}
+.second {
+  flex: 1;
 }

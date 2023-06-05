@@ -17,9 +17,9 @@ const useGetPriceInUsd = () => {
   }, []);
 
   return useCallback(
-    (priceInWei: ethers.BigNumberish) => {
+    (priceInWei: ethers.BigNumberish): string => {
       if (!priceOfEthInUsd) {
-        return 0;
+        return '0';
       }
       const ethPrice = ethers.utils.formatEther(priceInWei);
       const p = (priceOfEthInUsd * parseFloat(ethPrice)).toFixed(2);
