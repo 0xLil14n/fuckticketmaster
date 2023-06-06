@@ -1,11 +1,11 @@
-import Order, { Ticket } from '@/components/order';
-import OrderHistoryContainer from '@/components/orderhistorycontainer';
+import { Ticket } from '@/components/order';
+
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import client from '../../apolloclient';
-import { gql, useQuery } from '@apollo/client';
+
 import PurchaseHistory from '@/components/PurchaseHistory';
+import useGetTicketsForUser from '@/hooks/useGetTicketsForUser';
 
 type Ticket2 = {
   ticketId: string;
@@ -16,24 +16,11 @@ type Props = {
   tickets: Ticket2[];
 };
 
-const query = gql`
-  query Tickets($userId: String!) {
-    user(id: $userId) {
-      id
-      tickets {
-        id
-        ticketId
-      }
-    }
-  }
-`;
-
 const OrderHistory: React.FC<Props> = ({ tickets }) => {
   const { data: session } = useSession();
   const { address } = useAccount();
-  const { data, loading } = useQuery(query, {
-    variables: { userId: address?.toLowerCase() },
-  });
+
+  const { data, loading } = useGetTicketsForUser(address?.toLowerCase() ?? '');
   const ticketIds = [
     ...(data?.user?.tickets ?? []).reduce(
       (acc: Set<string>, curr: Ticket2) => acc.add(curr.ticketId),
@@ -54,7 +41,6 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
       }
       return acc;
     }, {});
-    console.log('aggtix', []);
 
     setAggTickets(aggTickets);
 

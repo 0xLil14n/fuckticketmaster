@@ -1,0 +1,58 @@
+.container {
+  background: black;
+  border: 1px solid gray;
+  padding: 1rem;
+  border-radius: 0.4rem;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.radio {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.lineItemsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.dropdown {
+  background: white;
+  color: black;
+  height: 2rem;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  width: 100%;
+}
+.listPrice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.listPrice p {
+  font-size: 0.7rem;
+}
+.p {
+  display: flex;
+  gap: 0.2rem;
+  cursor: pointer;
+}
+.reset {
+  border-bottom: 1px solid gray;
+}
+.error {
+  border: 2px solid red;
+}
+.errorBanner {
+  padding: 0.2rem 0 0.5rem 0;
+  font-size: 0.7rem;
+  display: flex;
+
+  color: red;
+}
+.priceError input {
+  border: 2px solid red;
+}

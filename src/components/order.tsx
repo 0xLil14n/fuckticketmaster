@@ -33,9 +33,9 @@ const Order: React.FC<Props> = ({ id: tokenId, quantity }) => {
   //     args: [id],
   //   });
   //   const tokenId = parseInt(data as string);
-  console.log('tokenId', tokenId);
+
   const a = [...new Array(parseInt(quantity.toString())).keys()];
-  console.log('a', a);
+
   const {
     data: resaleData,
     write,

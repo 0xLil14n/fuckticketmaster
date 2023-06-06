@@ -10,13 +10,6 @@
   flex-direction: column;
 }
 
-.lineItemContainer {
-  display: flex;
-  justify-content: space-between;
-}
-.lineItemContainer p {
-  font-size: 0.875rem;
-}
 .stack {
   display: flex;
   flex-direction: column;
@@ -65,9 +58,6 @@
   padding: 0.25rem;
 }
 
-.lineItemLabel {
-  color: rgb(179, 175, 175);
-}
 .red {
   color: rgb(204, 108, 64) !important;
 }

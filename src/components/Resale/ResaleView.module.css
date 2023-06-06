@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  gap: 1rem;
 }
 .listContainer {
   display: flex;
@@ -19,4 +20,11 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+}
+
+.rowOne {
+  flex: 1;
+}
+.rowTwo {
+  flex: 2;
 }

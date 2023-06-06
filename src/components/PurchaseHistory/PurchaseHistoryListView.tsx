@@ -1,6 +1,7 @@
 import useGetEventInfo from '@/hooks/useGetEventInfo';
 import Link from 'next/link';
 import styles from './PurchaseHistoryListView.module.css';
+import { getDayString, shortMonthName } from '@/utils/date';
 
 const PurchaseHistoryListView: React.FC<{ ticketIds: string[] }> = ({
   ticketIds,
@@ -61,9 +62,6 @@ const EventDetails: React.FC<{ eventName: string; venueName: string }> = ({
 
 const DateDetails: React.FC<{ dateString: string }> = ({ dateString }) => {
   const [date, time] = dateString.split(' ');
-  //   const d = Date({ date: day });
-  var shortMonthName = new Intl.DateTimeFormat('en-US', { month: 'short' })
-    .format;
 
   const a = new Date(date);
   const month = shortMonthName(a).toUpperCase();
@@ -72,9 +70,7 @@ const DateDetails: React.FC<{ dateString: string }> = ({ dateString }) => {
   return (
     <div>
       <h1>{month}</h1>
-      <h1>{`${day}${
-        day > 3 ? 'th' : day > 2 ? 'rd' : day > 1 ? 'nd' : 'st'
-      }`}</h1>
+      <h1>{getDayString(day)}</h1>
     </div>
   );
 };

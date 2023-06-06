@@ -4,7 +4,9 @@ import usePurchaseTicket from '@/hooks/usePurchaseTicket';
 import { useWaitForTransaction } from 'wagmi';
 import { useRouter } from 'next/router';
 import usePurchaseResaleTicket from '@/hooks/usePurchaseResaleTicket';
-import NumberInput from './Form/NumberInput';
+import Input from './Form/Input';
+import LineItem from './Form/LineItem';
+import SubmitButton from './Form/SubmitButton';
 
 const PurchaseSummary: React.FC<{
   priceUsd: string;
@@ -125,7 +127,7 @@ const PurchaseForm: React.FC<{
 }> = ({ qty, setQty, handleSubmit, isDisabled, buttonLabel, children }) => {
   return (
     <div className={`${styles.formContainer} ${styles.stack}`}>
-      <NumberInput
+      <Input
         onChange={(e) => {
           setQty(parseInt(e.target.value));
         }}
@@ -133,34 +135,11 @@ const PurchaseForm: React.FC<{
         label="quantity"
       />
       {children}
-      <button
-        type="button"
-        disabled={isDisabled}
-        onClick={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className={styles.button}
-      >
-        {buttonLabel}
-      </button>
-    </div>
-  );
-};
-
-const LineItem: React.FC<{
-  label: string;
-  price: string;
-  subtract?: boolean;
-}> = ({ label, price, subtract = false }) => {
-  return (
-    <div
-      className={`${styles.lineItemContainer} ${subtract ? styles.red : ''} `}
-    >
-      <p className={styles.lineItemLabel}>{label}</p>
-      <p className={`${styles.lineItemLabel} ${subtract ? styles.red : ''}`}>
-        {subtract && '-'}${price}
-      </p>
+      <SubmitButton
+        label={buttonLabel}
+        handleSubmit={handleSubmit}
+        isDisabled={isDisabled}
+      />
     </div>
   );
 };

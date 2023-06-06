@@ -1,0 +1,15 @@
+.lineItemContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.lineItemContainer p {
+  font-size: 0.875rem;
+}
+
+.lineItemLabel {
+  color: rgb(179, 175, 175);
+}
+
+.red {
+  color: rgb(204, 108, 64) !important;
+}

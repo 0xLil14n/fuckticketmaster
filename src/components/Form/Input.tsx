@@ -1,23 +1,28 @@
-import { ChangeEvent } from 'react';
-import styles from './NumberInput.module.css';
+import { ChangeEvent, HTMLInputTypeAttribute } from 'react';
+import styles from './Input.module.css';
 type Props = {
   onChange: (_: ChangeEvent<HTMLInputElement>) => void;
-  value: number;
+  value: any;
   label: string;
+  type: HTMLInputTypeAttribute;
 };
-const NumberInput: React.FC<Props> = ({ label, value, onChange }) => {
+const Input: React.FC<Props> = ({
+  label,
+  value,
+  type = 'number',
+  onChange,
+}) => {
   return (
     <div className={styles.stack}>
       <label className={styles.label}>{label}</label>
-
       <input
         className={styles.input}
         onChange={onChange}
         value={value}
-        type="number"
+        type={type}
         min={0}
       />
     </div>
   );
 };
-export default NumberInput;
+export default Input;
