@@ -1,0 +1,17 @@
+.input {
+  background: white;
+  color: black;
+  border: unset;
+  border-radius: 0.25rem;
+  height: 2rem;
+  padding: 0.5rem;
+}
+
+.label {
+  padding-bottom: 0.6rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}

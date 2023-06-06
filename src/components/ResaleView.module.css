@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+}
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 500px;
+}
+.container p {
+  font-size: 0.75rem;
+  color: rgb(143, 137, 137);
+}
+.container h2 {
+  font-size: 1rem;
+}
+.rowContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

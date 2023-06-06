@@ -4,6 +4,7 @@ import usePurchaseTicket from '@/hooks/usePurchaseTicket';
 import { useWaitForTransaction } from 'wagmi';
 import { useRouter } from 'next/router';
 import usePurchaseResaleTicket from '@/hooks/usePurchaseResaleTicket';
+import NumberInput from './Form/NumberInput';
 
 const PurchaseSummary: React.FC<{
   priceUsd: string;
@@ -124,19 +125,13 @@ const PurchaseForm: React.FC<{
 }> = ({ qty, setQty, handleSubmit, isDisabled, buttonLabel, children }) => {
   return (
     <div className={`${styles.formContainer} ${styles.stack}`}>
-      <div className={styles.stack}>
-        <label className={styles.label}>quantity</label>
-
-        <input
-          className={styles.input}
-          onChange={(e) => {
-            setQty(parseInt(e.target.value));
-          }}
-          value={qty}
-          type="number"
-          min={0}
-        />
-      </div>
+      <NumberInput
+        onChange={(e) => {
+          setQty(parseInt(e.target.value));
+        }}
+        value={qty}
+        label="quantity"
+      />
       {children}
       <button
         type="button"
