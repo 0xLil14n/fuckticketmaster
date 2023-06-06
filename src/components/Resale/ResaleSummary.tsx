@@ -13,7 +13,9 @@ import useGetPriceInEth from '@/hooks/useGetPriceInEth';
 const ResaleSummary: React.FC<{
   eventId: string;
   setResaleSuccess: (_: boolean) => void;
-}> = ({ eventId, setResaleSuccess }) => {
+  setInvalidListing: (_: boolean) => void;
+  invalidListing: boolean;
+}> = ({ eventId, setResaleSuccess, setInvalidListing, invalidListing }) => {
   const [quantity, setQuantity] = useState(0);
   const [quantityError, setQuantityError] = useState(false);
   const [priceError, setPriceError] = useState(false);
@@ -24,7 +26,9 @@ const ResaleSummary: React.FC<{
     txSuccess,
     isSuccess,
     isLoading,
+    error: listForResaleError,
   } = useListForResale();
+
   useEffect(() => {
     setQuantityError(false);
     setQuantity(0);
@@ -77,6 +81,9 @@ const ResaleSummary: React.FC<{
       return;
     }
     listForResale(eventId, priceInEth!, quantity);
+    setInvalidListing(
+      Boolean(listForResaleError?.message.includes('listing per event'))
+    );
   };
   return (
     <div>
@@ -93,7 +100,9 @@ const ResaleSummary: React.FC<{
               quantityError ? styles.error : ''
             }`}
           >
-            <option value={0}>-- Select Number of Tickets --</option>
+            <option selected={quantity == 0} value={0}>
+              -- Select Number of Tickets --
+            </option>
             {ticketsArr.map((i) => {
               return (
                 <option value={i}>
@@ -136,23 +145,30 @@ const ResaleSummary: React.FC<{
               : 'List Tickets For Resale'
           }`}
           handleSubmit={handleSubmit}
-          isDisabled={isLoading || isSuccess}
+          isDisabled={isLoading || isSuccess || Boolean(invalidListing)}
         />
-        <div className={styles.lineItemsContainer}>
-          <h2>breakdown (per ticket)</h2>
-          <LineItem label="Your listing price" price={'38.50'} />
-          <LineItem
-            label="Artist cut"
-            subtract
-            price={(profit / 2).toFixed(2)}
-          />
-          <LineItem label="You take home" price={(profit / 2).toFixed(2)} />
-        </div>
+        {invalidListing && (
+          <ErrorMessage errorMessage="You already have a listing for this event." />
+        )}
+        <Breakdown priceUsd={priceUsd} profit={profit} />
       </div>
     </div>
   );
 };
 
+const Breakdown: React.FC<{ priceUsd: number; profit: number }> = ({
+  priceUsd,
+  profit,
+}) => {
+  return (
+    <div className={styles.lineItemsContainer}>
+      <h2>breakdown (per ticket)</h2>
+      <LineItem label="Your listing price" price={priceUsd.toFixed(2)} />
+      <LineItem label="Artist cut" subtract price={(profit / 2).toFixed(2)} />
+      <LineItem label="You take home" price={(profit / 2).toFixed(2)} />
+    </div>
+  );
+};
 type ListPriceViewProps = {
   priceError: boolean;
   setPriceError: (_: boolean) => void;

@@ -7,3 +7,7 @@
   width: 100%;
   cursor: pointer;
 }
+.button:disabled {
+  background: gray;
+  color: darkgray;
+}

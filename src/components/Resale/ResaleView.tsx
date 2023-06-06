@@ -13,6 +13,7 @@ const ResaleView: React.FC<{
   setResaleSuccess: (_: boolean) => void;
 }> = ({ ticketIds, setResaleSuccess }) => {
   const [selectedTicket, setSelectedTicket] = useState(0);
+  const [invalidListing, setInvalidListing] = useState(false);
   return (
     <div className={styles.container}>
       <div className={styles.listContainer}>
@@ -20,7 +21,11 @@ const ResaleView: React.FC<{
           <RadioRowView
             label={'label'}
             radioId="resaleTicket"
-            onClick={() => setSelectedTicket(i)}
+            onClick={() => {
+              console.log('in onclick');
+              setSelectedTicket(i);
+              setInvalidListing(false);
+            }}
             isChecked={i == selectedTicket}
           >
             <ResaleEventDetailsView eventId={ticketId} />
@@ -28,6 +33,8 @@ const ResaleView: React.FC<{
         ))}
       </div>
       <ResaleSummary
+        invalidListing={invalidListing}
+        setInvalidListing={setInvalidListing}
         setResaleSuccess={setResaleSuccess}
         eventId={ticketIds[selectedTicket]}
       />
