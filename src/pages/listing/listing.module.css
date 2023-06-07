@@ -1,22 +1,49 @@
-.input {
-  color: var(--good-blue);
-  background: var(--good-green);
-  height: 2rem;
-  width: 8rem;
-
-  border-radius: 0.2rem;
-  padding: 0.2rem;
-}
-
 .form {
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  gap: 0.5rem;
-  /* background: white; */
+  gap: 1.3rem;
+  font-size: 0.8rem;
 }
 
 .input:invalid {
-  /* background: red; */
+  border: 2px solid red;
+}
+
+.dropdown {
+  background: white;
+  color: black;
+  height: 2rem;
+  border-radius: 0.3rem;
+  padding: 0.5rem;
+  width: 100%;
+}
+.container {
+  background: #212121;
+  height: 100%;
+  width: 400px;
+
+  padding: 2rem;
+  border-radius: 0.4rem;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+}
+.datePicker {
+  height: 2rem;
+  width: 100%;
+  border-radius: 0.3rem;
+  border: unset;
+  padding: 0.3rem;
+  /* background: white; */
+  /* color: black; */
+}
+.dateContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.error {
   border: 2px solid red;
 }

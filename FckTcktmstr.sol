@@ -18,10 +18,9 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
 
     mapping(uint256 => address) public eventOwners;
     mapping(uint256 => uint256) public tokenListPrices;
-    mapping(uint256 => uint256) public maxSupply;
+    mapping(uint256 => uint256) public supplyLeft;
     mapping(address => mapping(uint256 => uint256)) public tokenResalePrices;
     mapping(address => mapping(uint256 => uint256)) soldFor;
-    mapping(string => uint256) public uuidToTicketId;
     mapping(address => uint256) private purchasesPerWallet;
 
     mapping(address => mapping(uint256 => uint256)) public numTokensForSale;
@@ -42,12 +41,12 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
 
     function mint(uint256 id, uint256 amount, uint256 price) internal {
         require(eventOwners[id] != 0x0000000000000000000000000000000000000000, "Invalid id. Does not exist");
-        require(totalSupply(id) + amount <= maxSupply[id], "Maximum supply already reached");
+        require(totalSupply(id) + amount <= supplyLeft[id], "Maximum supply already reached");
         // require(purchasesPerWallet[msg.sender] < MAX_PER_WALLET, "Wallet purchase limit reached");
         require(msg.value >= price * amount, "Insufficient funds");
 
         purchasesPerWallet[msg.sender] += 1;
-
+        supplyLeft[id] -= amount;
         _mint(msg.sender, id, amount, "");
         soldFor[msg.sender][id] = price;
     }
@@ -57,7 +56,7 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
         require(priceInWei > 0, "Invalid price. Price must be greater than zero");
         uint256 ticketId = currentTokenId + 1;
         currentTokenId = ticketId;
-        maxSupply[ticketId] = ticketSupply;
+        supplyLeft[ticketId] = ticketSupply;
         tokenListPrices[ticketId] = priceInWei;
         eventOwners[ticketId] = msg.sender;
         emit TicketCreated(ticketId, msg.sender, ticketSupply, priceInWei, eventName, date, venueName);

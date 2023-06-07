@@ -14,6 +14,7 @@
 .stack {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 .input[type='number']::-webkit-outer-spin-button,
 .input[type='number']::-webkit-inner-spin-button {
@@ -22,4 +23,7 @@
 }
 .input[type='number'] {
   -moz-appearance: textfield;
+}
+.error {
+  border: 2px solid red;
 }

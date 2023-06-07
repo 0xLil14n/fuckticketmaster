@@ -3,6 +3,9 @@ import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import styles from './listing.module.css';
 import { BigNumber, ethers } from 'ethers';
 import { ABI, SEPOLIA_ADDR } from '../../../contractdetails';
+import SubmitButton from '@/components/Form/SubmitButton';
+import Input from '@/components/Form/Input';
+import ErrorMessage from '@/components/Form/ErrorMessage';
 
 type Props<T> = {
   id: string;
@@ -46,6 +49,13 @@ const Listing = () => {
   const [priceInWei, setPriceInWei] = useState<BigInt | null>(null);
   const [venueName, setVenueName] = useState('');
 
+  const [maxSupplyError, setMaxSupplyError] = useState(false);
+  const [eventNameError, setEventNameError] = useState(false);
+  const [priceError, setPriceError] = useState(false);
+  const [timeError, setTimeError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+  const [venueNameError, setVenueNameError] = useState(false);
+
   const dateTime = `${date} ${time}`;
   const {
     data: resaleData,
@@ -80,85 +90,117 @@ const Listing = () => {
   }, [priceUsd]);
   const min = new Date().toLocaleDateString('fr-ca');
 
+  const handleSubmit = () => {
+    if (!eventName) {
+      setEventNameError(true);
+      return;
+    }
+    if (maxSupply <= 0) {
+      setMaxSupplyError(true);
+      return;
+    }
+    if (!venueName) {
+      setVenueNameError(true);
+      return;
+    }
+    if (priceUsd <= 0) {
+      setPriceError(true);
+      return;
+    }
+    if (!time) {
+      setTimeError(true);
+      return;
+    }
+
+    write?.();
+  };
+
   return (
     <div>
-      create listing {date} {time}
-      price: {priceInWei?.toString()}
-      <form className={styles.form}>
-        <FormInput
-          value={eventName}
-          onChange={(e) => {
-            setEventName(e.target.value);
-          }}
-          id="eventName"
-          placeholder="event name"
-          label="event name"
-        />
-        <div>
-          <input
-            className={styles.input}
-            type="number"
-            name="maxSupply"
-            id="maxSupply"
-            placeholder="max supply"
+      Create Listing
+      <div className={styles.container}>
+        <form className={styles.form}>
+          <Input
+            type="text"
+            onChange={(e) => {
+              setEventName(e.target.value);
+              setEventNameError(false);
+            }}
+            label="Event Name"
+            value={eventName}
+            hasError={eventNameError}
+            errorMessage="Event Name required."
+          />
+
+          <Input
+            label="Max Supply"
+            onChange={(e) => {
+              setMaxSupply(parseInt(e.target.value));
+              setMaxSupplyError(false);
+            }}
             value={maxSupply}
-            onChange={(e) => setMaxSupply(parseInt(e.target.value))}
+            hasError={maxSupplyError}
+            errorMessage="Please enter valid max supply."
           />
-          <label htmlFor="maxSupply">max supply</label>
-        </div>
-        <div>
-          <input
-            type="number"
-            name="price"
-            id="price"
-            placeholder="price (usd)"
+
+          <Input
+            label="Price (USD)"
+            onChange={(e) => {
+              setPriceUsd(parseInt(e.target.value));
+              setPriceError(false);
+            }}
             value={priceUsd}
-            onChange={(e) => setPriceUsd(parseInt(e.target.value))}
+            hasError={priceError}
+            errorMessage="Please enter valid price."
           />
-          <label htmlFor="price">price (usd)</label>
-        </div>
-        <div>
-          <input
-            name="venue"
-            id="venue"
-            placeholder="venue name"
+          <Input
+            label="Venue Name"
+            onChange={(e) => {
+              setVenueName(e.target.value);
+              setVenueNameError(false);
+            }}
             value={venueName}
-            onChange={(e) => setVenueName(e.target.value)}
+            hasError={venueNameError}
+            errorMessage="Please enter a valid venue name."
           />
-          <label htmlFor="venue">venue</label>
-        </div>
-        <div>
-          <input
-            min={min}
+
+          <Input
+            value={date}
             type="date"
-            name="date"
-            id="date"
-            placeholder="date"
-            onChange={(e) => setDate(e.target.value)}
+            label="Date"
+            onChange={(e) => {
+              setDate(e.target.value);
+              setDateError(false);
+            }}
+            hasError={dateError}
+            errorMessage="Please enter a date."
           />
-          <select
-            name="time"
-            id="time"
-            onChange={(e) => setTime(e.target.value)}
-          >
-            <option value="">--select time--</option>
-            {[...new Array(9).keys()].map((i) => {
-              const timeString = `${3 + i}:00pm`;
-              return <option value={timeString}>{timeString}</option>;
-            })}
-          </select>
-          <label htmlFor="time">date</label>
-        </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            write?.();
-          }}
-        >
-          create tickets
-        </button>
-      </form>
+          <div>
+            <select
+              className={`${styles.dropdown} ${timeError ? styles.error : ''}`}
+              name="time"
+              id="time"
+              onChange={(e) => {
+                setTime(e.target.value);
+                setTimeError(false);
+              }}
+            >
+              <option value="">--select time--</option>
+              {[...new Array(9).keys()].map((i) => {
+                const timeString = `${3 + i}:00pm`;
+                return <option value={timeString}>{timeString}</option>;
+              })}
+            </select>
+            {timeError && <ErrorMessage errorMessage="Select a time." />}
+          </div>
+
+          <SubmitButton
+            handleSubmit={handleSubmit}
+            label="Create Tickets"
+            isDisabled={false}
+          />
+        </form>
+      </div>
     </div>
   );
 };
