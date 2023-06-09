@@ -7,14 +7,11 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/finance/PaymentSplitter.sol";
+import "Presale.sol";
 
-contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
-    uint public publicPrice = 0.0001 ether;
-    // uint public presalePrice = 0.001 ether;
+contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply { 
     
-    uint public MAX_SUPPLY = 3;
-    uint public MAX_PER_WALLET = 3;
-    uint256 private currentTokenId = 0;
+    uint256 public currentTokenId = 0;
 
     mapping(uint256 => address) public eventOwners;
     mapping(uint256 => uint256) public tokenListPrices;
@@ -23,6 +20,8 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
     mapping(address => mapping(uint256 => uint256)) soldFor;
     mapping(address => uint256) private purchasesPerWallet;
 
+    mapping(uint256 => Presale) public presales;
+
     mapping(address => mapping(uint256 => uint256)) public numTokensForSale;
 
     event TicketCreated(uint256 indexed ticketId, address indexed owner, uint256 ticketSupply, uint256 priceInWei, string eventName, string date, string venueName);
@@ -30,14 +29,21 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
     event RoyaltyDisbursed(address indexed owner, uint256 tokenId, uint256 profit);
     event TicketSold(address indexed owner, uint256 ticketId, uint256 quantity);
     event TokenListedForSale(address indexed owner, uint256 indexed tokenId, uint256 price, uint256 amount);
+    event PresaleCreated(uint256 eventId, uint256 startTime, uint256 endTime);
 
-    constructor(
-        address[] memory _owners, 
-        uint256[] memory _shares
-    ) 
+    constructor() 
         ERC1155("") 
-        PaymentSplitter(_owners, _shares)
+        
     {}
+
+    function createPresale(uint256 ticketSupply, uint256 priceInWei, string memory eventName, string memory date, string memory venueName, uint256 startTime, uint256 endTime) public {
+        createTicket(ticketSupply, priceInWei, eventName, date, venueName);
+        require(address(presales[currentTokenId] ) == 0x0000000000000000000000000000000000000000, "already a presale for this event");
+        Presale presale = new Presale(msg.sender, 10, currentTokenId, startTime, endTime);
+        presales[currentTokenId] = presale;
+        emit PresaleCreated(currentTokenId, startTime, endTime);
+        
+    }
 
     function mint(uint256 id, uint256 amount, uint256 price) internal {
         require(eventOwners[id] != 0x0000000000000000000000000000000000000000, "Invalid id. Does not exist");
@@ -62,21 +68,13 @@ contract FckTcktmstr is ERC1155, Ownable, ERC1155Supply, PaymentSplitter {
         emit TicketCreated(ticketId, msg.sender, ticketSupply, priceInWei, eventName, date, venueName);
     }
 
-    function publicMint(uint256 ticketId, uint256 amount)
-        public
-        payable
-    {
 
-        mint(ticketId, amount, publicPrice);
-        emit TicketSold(msg.sender, ticketId, amount);
-    }
-
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        onlyOwner 
-    {
-        _mintBatch(to, ids, amounts, data);
-    }
+    // function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+    //     public
+    //     onlyOwner 
+    // {
+    //     _mintBatch(to, ids, amounts, data);
+    // }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
         internal
