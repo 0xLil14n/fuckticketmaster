@@ -7,6 +7,11 @@ const eventQuery = gql`
       date
       venueName
       id
+      presale {
+        startTime
+        endTime
+        state
+      }
       listings {
         id
         listedBy {

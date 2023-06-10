@@ -42,3 +42,11 @@
 .second {
   flex: 1;
 }
+
+.presaleContainer {
+  display: flex;
+
+  gap: 1rem;
+  flex-direction: column;
+  justify-content: flex-start;
+}

@@ -6,18 +6,7 @@
   "output": {
     "abi": [
       {
-        "inputs": [
-          {
-            "internalType": "address[]",
-            "name": "_owners",
-            "type": "address[]"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "_shares",
-            "type": "uint256[]"
-          }
-        ],
+        "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
       },
@@ -50,25 +39,25 @@
         "anonymous": false,
         "inputs": [
           {
-            "indexed": true,
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          },
-          {
             "indexed": false,
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
+            "internalType": "uint256",
+            "name": "eventId",
+            "type": "uint256"
           },
           {
             "indexed": false,
             "internalType": "uint256",
-            "name": "amount",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "endTime",
             "type": "uint256"
           }
         ],
-        "name": "ERC20PaymentReleased",
+        "name": "PresaleCreated",
         "type": "event"
       },
       {
@@ -76,75 +65,24 @@
         "inputs": [
           {
             "indexed": true,
-            "internalType": "address",
-            "name": "previousOwner",
-            "type": "address"
-          },
-          {
-            "indexed": true,
-            "internalType": "address",
-            "name": "newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "OwnershipTransferred",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          },
-          {
-            "indexed": false,
             "internalType": "uint256",
-            "name": "shares",
+            "name": "eventId",
             "type": "uint256"
-          }
-        ],
-        "name": "PayeeAdded",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "from",
-            "type": "address"
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          }
-        ],
-        "name": "PaymentReceived",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
+            "internalType": "enum Presale.PresaleState",
+            "name": "presaleStateBefore",
+            "type": "uint8"
           },
           {
             "indexed": false,
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
+            "internalType": "enum Presale.PresaleState",
+            "name": "presaleStateAfter",
+            "type": "uint8"
           }
         ],
-        "name": "PaymentReleased",
+        "name": "PresaleStateUpdated",
         "type": "event"
       },
       {
@@ -402,32 +340,6 @@
         "type": "event"
       },
       {
-        "inputs": [],
-        "name": "MAX_PER_WALLET",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "MAX_SUPPLY",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
         "inputs": [
           {
             "internalType": "address",
@@ -501,6 +413,73 @@
       {
         "inputs": [
           {
+            "internalType": "bytes",
+            "name": "",
+            "type": "bytes"
+          }
+        ],
+        "name": "checkUpkeep",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          },
+          {
+            "internalType": "bytes",
+            "name": "performData",
+            "type": "bytes"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "ticketSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "priceInWei",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "eventName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "date",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "venueName",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endTime",
+            "type": "uint256"
+          }
+        ],
+        "name": "createPresale",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "uint256",
             "name": "ticketSupply",
             "type": "uint256"
@@ -529,6 +508,19 @@
         "name": "createTicket",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "currentTokenId",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -573,6 +565,44 @@
         "inputs": [
           {
             "internalType": "address",
+            "name": "id",
+            "type": "address"
+          }
+        ],
+        "name": "getReputationScore",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
+          }
+        ],
+        "name": "hasPresale",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
             "name": "account",
             "type": "address"
           },
@@ -596,29 +626,32 @@
       {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
+            "internalType": "uint256",
+            "name": "id",
+            "type": "uint256"
           },
           {
-            "internalType": "uint256[]",
-            "name": "ids",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "amounts",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "bytes",
-            "name": "data",
-            "type": "bytes"
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
           }
         ],
-        "name": "mintBatch",
+        "name": "mint",
         "outputs": [],
-        "stateMutability": "nonpayable",
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "needsUpkeep",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -646,120 +679,14 @@
         "type": "function"
       },
       {
-        "inputs": [],
-        "name": "owner",
-        "outputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
         "inputs": [
           {
-            "internalType": "uint256",
-            "name": "index",
-            "type": "uint256"
-          }
-        ],
-        "name": "payee",
-        "outputs": [
-          {
-            "internalType": "address",
+            "internalType": "bytes",
             "name": "",
-            "type": "address"
+            "type": "bytes"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "ticketId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          }
-        ],
-        "name": "publicMint",
-        "outputs": [],
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "publicPrice",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "releasable",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "releasable",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address payable",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "release",
+        "name": "performUpkeep",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -767,69 +694,20 @@
       {
         "inputs": [
           {
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "release",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "released",
-        "outputs": [
-          {
             "internalType": "uint256",
             "name": "",
             "type": "uint256"
           }
         ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
+        "name": "presales",
+        "outputs": [
           {
-            "internalType": "address",
-            "name": "account",
+            "internalType": "contract Presale",
+            "name": "",
             "type": "address"
           }
         ],
-        "name": "released",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "renounceOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -942,25 +820,6 @@
       {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "account",
-            "type": "address"
-          }
-        ],
-        "name": "shares",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "uint256",
             "name": "",
             "type": "uint256"
@@ -1042,51 +901,6 @@
       {
         "inputs": [
           {
-            "internalType": "contract IERC20",
-            "name": "token",
-            "type": "address"
-          }
-        ],
-        "name": "totalReleased",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "totalReleased",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "totalShares",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
             "internalType": "uint256",
             "name": "id",
             "type": "uint256"
@@ -1101,19 +915,6 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "newOwner",
-            "type": "address"
-          }
-        ],
-        "name": "transferOwnership",
-        "outputs": [],
-        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -1134,10 +935,6 @@
         ],
         "stateMutability": "view",
         "type": "function"
-      },
-      {
-        "stateMutability": "payable",
-        "type": "receive"
       }
     ],
     "devdoc": {
@@ -1169,33 +966,6 @@
         "isApprovedForAll(address,address)": {
           "details": "See {IERC1155-isApprovedForAll}."
         },
-        "owner()": {
-          "details": "Returns the address of the current owner."
-        },
-        "payee(uint256)": {
-          "details": "Getter for the address of the payee number `index`."
-        },
-        "releasable(address)": {
-          "details": "Getter for the amount of payee's releasable Ether."
-        },
-        "releasable(address,address)": {
-          "details": "Getter for the amount of payee's releasable `token` tokens. `token` should be the address of an IERC20 contract."
-        },
-        "release(address)": {
-          "details": "Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the total shares and their previous withdrawals."
-        },
-        "release(address,address)": {
-          "details": "Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20 contract."
-        },
-        "released(address)": {
-          "details": "Getter for the amount of Ether already released to a payee."
-        },
-        "released(address,address)": {
-          "details": "Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an IERC20 contract."
-        },
-        "renounceOwnership()": {
-          "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
-        },
         "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": {
           "details": "See {IERC1155-safeBatchTransferFrom}."
         },
@@ -1205,26 +975,11 @@
         "setApprovalForAll(address,bool)": {
           "details": "See {IERC1155-setApprovalForAll}."
         },
-        "shares(address)": {
-          "details": "Getter for the amount of shares held by an account."
-        },
         "supportsInterface(bytes4)": {
           "details": "See {IERC165-supportsInterface}."
         },
-        "totalReleased()": {
-          "details": "Getter for the total amount of Ether already released."
-        },
-        "totalReleased(address)": {
-          "details": "Getter for the total amount of `token` already released. `token` should be the address of an IERC20 contract."
-        },
-        "totalShares()": {
-          "details": "Getter for the total shares held by payees."
-        },
         "totalSupply(uint256)": {
           "details": "Total amount of tokens in with a given id."
-        },
-        "transferOwnership(address)": {
-          "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
         },
         "uri(uint256)": {
           "details": "See {IERC1155MetadataURI-uri}. This implementation returns the same URI for *all* token types. It relies on the token type ID substitution mechanism https://eips.ethereum.org/EIPS/eip-1155#metadata[defined in the EIP]. Clients calling this function must replace the `\\{id\\}` substring with the actual token type ID."
@@ -1240,7 +995,7 @@
   },
   "settings": {
     "compilationTarget": {
-      "contract-9d8b91b7db.sol": "FckTcktmstr"
+      "FuckTicketmaster.sol": "FckTcktmstr"
     },
     "evmVersion": "paris",
     "libraries": {},
@@ -1254,28 +1009,28 @@
     "remappings": []
   },
   "sources": {
-    "@openzeppelin/contracts/access/Ownable.sol": {
-      "keccak256": "0xa94b34880e3c1b0b931662cb1c09e5dfa6662f31cba80e07c5ee71cd135c9673",
+    "@chainlink/contracts/src/v0.8/AutomationBase.sol": {
+      "keccak256": "0x5d354afa1a97dffe66094397cdcbb0c14713cf3d609d88fd8f9891010e9a351a",
       "license": "MIT",
       "urls": [
-        "bzz-raw://40fb1b5102468f783961d0af743f91b9980cf66b50d1d12009f6bb1869cea4d2",
-        "dweb:/ipfs/QmYqEbJML4jB1GHbzD4cUZDtJg5wVwNm3vDJq1GbyDus8y"
+        "bzz-raw://3613ee132e1f05b3e23955db6a849966487fab8ea33e9bb70d6f038fc48c0608",
+        "dweb:/ipfs/QmRgdumWFMX35vSrZpCCvXDTvRBVXRkexnxoZqqfnGisnZ"
       ]
     },
-    "@openzeppelin/contracts/finance/PaymentSplitter.sol": {
-      "keccak256": "0xba00a079c0def02f9e905ed091f01bcf9caa41ec215862a315e9f3838be61cdc",
+    "@chainlink/contracts/src/v0.8/AutomationCompatible.sol": {
+      "keccak256": "0x40e5ae0eff4edd0740c1b5590d09c344f84dee031e82d5294563e99603774f80",
       "license": "MIT",
       "urls": [
-        "bzz-raw://64c2cac21034117cbda842f32ae50ab87aa0e71ffbeb94d9b6051f8085abd8a7",
-        "dweb:/ipfs/QmYUCe45jDezpnK9y7ecqZVy1iECqW63mUrgqnM6YZdrrF"
+        "bzz-raw://24a134c3bea2e8a6ed29f109e422a9bafb3f43523235188618cf016ed86fafc8",
+        "dweb:/ipfs/QmPUGoVde38kbteT358jsskzh5spoJtUoaNZ8UJWVqP3im"
       ]
     },
-    "@openzeppelin/contracts/security/Pausable.sol": {
-      "keccak256": "0x0849d93b16c9940beb286a7864ed02724b248b93e0d80ef6355af5ef15c64773",
+    "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol": {
+      "keccak256": "0x67076747c6f66d8d43472a56e72879c350056bff82e069addaf9064922863340",
       "license": "MIT",
       "urls": [
-        "bzz-raw://4ddabb16009cd17eaca3143feadf450ac13e72919ebe2ca50e00f61cb78bc004",
-        "dweb:/ipfs/QmSPwPxX7d6TTWakN5jy5wsaGkS1y9TW8fuhGSraMkLk2B"
+        "bzz-raw://b738dba680a6fbc4afc85819743f13f5b7f4790ec8634c9894e1160327b11b6e",
+        "dweb:/ipfs/Qmbv3euvQppeBm2g61khcJSRMZWi78xUWzbnjKAvDBnka4"
       ]
     },
     "@openzeppelin/contracts/token/ERC1155/ERC1155.sol": {
@@ -1318,30 +1073,6 @@
         "dweb:/ipfs/QmNoSE6knNfFncdDDLTb3fGR6oSQty1srG96Vsx3E9wQdw"
       ]
     },
-    "@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "keccak256": "0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b",
-      "license": "MIT",
-      "urls": [
-        "bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34",
-        "dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr"
-      ]
-    },
-    "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
-      "keccak256": "0xf41ca991f30855bf80ffd11e9347856a517b977f0a6c2d52e6421a99b7840329",
-      "license": "MIT",
-      "urls": [
-        "bzz-raw://b2717fd2bdac99daa960a6de500754ea1b932093c946388c381da48658234b95",
-        "dweb:/ipfs/QmP6QVMn6UeA3ByahyJbYQr5M6coHKBKsf3ySZSfbyA8R7"
-      ]
-    },
-    "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
-      "keccak256": "0x9b72f93be69ca894d8492c244259615c4a742afc8d63720dbc8bb81087d9b238",
-      "license": "MIT",
-      "urls": [
-        "bzz-raw://f5a7b96e511be78d5cdf635c784e6ab8cdd38625bb8cafb8a80914a1c89cf0f6",
-        "dweb:/ipfs/QmVzTCwJxQAkjRQHboT5QrvsVJGWQHgfEjeTbvyxoKBrds"
-      ]
-    },
     "@openzeppelin/contracts/utils/Address.sol": {
       "keccak256": "0xf96f969e24029d43d0df89e59d365f277021dac62b48e1c1e3ebe0acdd7f1ca1",
       "license": "MIT",
@@ -1356,14 +1087,6 @@
       "urls": [
         "bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
         "dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
-      ]
-    },
-    "@openzeppelin/contracts/utils/Strings.sol": {
-      "keccak256": "0xa4d1d62251f8574deb032a35fc948386a9b4de74b812d4f545a1ac120486b48a",
-      "license": "MIT",
-      "urls": [
-        "bzz-raw://8c969013129ba9e651a20735ef659fef6d8a1139ea3607bd4b26ddea2d645634",
-        "dweb:/ipfs/QmVhVa6LGuzAcB8qgDtVHRkucn4ihj5UZr8xBLcJkP6ucb"
       ]
     },
     "@openzeppelin/contracts/utils/introspection/ERC165.sol": {
@@ -1382,20 +1105,28 @@
         "dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
       ]
     },
-    "@openzeppelin/contracts/utils/math/Math.sol": {
-      "keccak256": "0xa1e8e83cd0087785df04ac79fb395d9f3684caeaf973d9e2c71caef723a3a5d6",
+    "FuckTicketmaster.sol": {
+      "keccak256": "0xfeba10971f07e6684e348e083868489e6bc97625ef9473e1792c7e61b0906228",
       "license": "MIT",
       "urls": [
-        "bzz-raw://33bbf48cc069be677705037ba7520c22b1b622c23b33e1a71495f2d36549d40b",
-        "dweb:/ipfs/Qmct36zWXv3j7LZB83uwbg7TXwnZSN1fqHNDZ93GG98bGz"
+        "bzz-raw://2637c16a96b03ea193bf1a5da90b02607e43e96d3bc2a9e2009afbbdf4479af8",
+        "dweb:/ipfs/QmWtLUohcBYMiAjnW2aKepvvEWubUgsEjLyVpRQzyucGng"
       ]
     },
-    "contract-9d8b91b7db.sol": {
-      "keccak256": "0x07a4b5c0ea948fb02cd4f0536bd38dbc462f812545449418290b4191fbd0e608",
+    "Presale.sol": {
+      "keccak256": "0x22524f13160f7efb444fd32bf9181d76542333a1c44d22c6fd4cabb77ae132f3",
       "license": "MIT",
       "urls": [
-        "bzz-raw://e10556d7b19cb0177f966f91045d7e0ee6187573cd257c09ee98646e4e52cabd",
-        "dweb:/ipfs/QmVRpbdjQrvP5hekmFMgf2EvCdYSRFyukM6CPQZNsBxb4o"
+        "bzz-raw://833a6f3005b2b91fe69049616483a66102ab1f4967fbbd6c73c8d43bda594092",
+        "dweb:/ipfs/QmNWtzsNhsTEHRZDpVwnTWPs9GUPNCUGLQqkmYLPCTme2M"
+      ]
+    },
+    "ReputationScore.sol": {
+      "keccak256": "0x6a867b9b9e6a50e48f8b7ab9e0b986e7490677e4e5fe7bd53d7ac68b0b35b404",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://2c2c9a81767d42c6e8ab6aadbc6c5da28fc1804118cb1daf2bbda567b83a7e21",
+        "dweb:/ipfs/QmRbyXKxxu4xsim4GiThXnui2s1dLvU26u7miG7pFp1cPG"
       ]
     }
   },

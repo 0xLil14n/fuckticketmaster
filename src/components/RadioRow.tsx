@@ -32,7 +32,9 @@ const RadioRow: React.FC<{
       <label className={styles.label}>
         <h2>{price}</h2>
         <div>
-          <h3 className={styles.titleHighlight}>best for artist</h3>
+          {id == 0 && (
+            <h3 className={styles.titleHighlight}>best for artist</h3>
+          )}
           <h2>general admission</h2>
           <p>100% of profit goes to the artist</p>
         </div>

@@ -33,7 +33,7 @@ const ViewTicketDetails: React.FC<{ ticketId: string }> = ({ ticketId }) => {
     </Link>
   );
 };
-const TicketInfo: React.FC<{ eventId: string }> = ({ eventId }) => {
+export const TicketInfo: React.FC<{ eventId: string }> = ({ eventId }) => {
   const { data, loading } = useGetEventInfo(eventId);
 
   if (!data) {

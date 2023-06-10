@@ -9,6 +9,7 @@ import useGetOriginalListing from '@/hooks/useGetOriginalListing';
 import useGetPriceInUsd from '@/hooks/useGetPriceInUsd';
 import useListForResale from '@/hooks/useListForResale';
 import useGetPriceInEth from '@/hooks/useGetPriceInEth';
+import ErrorMessage from '../Form/ErrorMessage';
 
 const ResaleSummary: React.FC<{
   eventId: string;
@@ -216,7 +217,4 @@ const ListPriceView: React.FC<ListPriceViewProps> = ({
   );
 };
 
-const ErrorMessage: React.FC<{ errorMessage: string }> = ({ errorMessage }) => {
-  return <div className={styles.errorBanner}>{errorMessage}</div>;
-};
 export default ResaleSummary;

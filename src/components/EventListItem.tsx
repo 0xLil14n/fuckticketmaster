@@ -12,6 +12,11 @@ const eventsQuery = gql`
       date
       eventName
       venueName
+      presale {
+        startTime
+        endTime
+        state
+      }
     }
   }
 `;

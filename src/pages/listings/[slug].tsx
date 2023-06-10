@@ -2,6 +2,9 @@ import { Listing } from '@/components/resaleTicket';
 import { gql, useQuery } from '@apollo/client';
 import { useRouter } from 'next/router';
 import styles from './listings.module.css';
+import useGetEventInfo from '@/hooks/useGetEventInfo';
+import useGetPriceInUsd from '@/hooks/useGetPriceInUsd';
+import { TicketInfo } from '@/components/PurchaseHistory/PurchaseHistoryListView';
 
 const listingsQuery = gql`
   query Listings($userId: String!) {
@@ -17,35 +20,52 @@ const listingsQuery = gql`
     }
   }
 `;
+
+const total = 11_429;
+const resale = 2_010;
+const tickets = 224;
+
+const toCurrency = (x: number) =>
+  x.toLocaleString('en-US', {
+    currency: 'USD',
+    style: 'currency',
+    minimumFractionDigits: 0,
+  });
+
 const ListingsView = () => {
   const router = useRouter();
   const userId = `${router.query.slug}`.toLowerCase();
   const { data, loading } = useQuery(listingsQuery, {
     variables: { userId },
   });
+
   const listings = data?.user?.listings ?? [];
   const resaleListings = (listings as Listing[]).filter((l) => l.isResale);
   const saleListings = (listings as Listing[]).filter((l) => !l.isResale);
 
   return (
     <div className={styles.container}>
-      <div className={styles.summarycontainer}>
-        <div className={styles.box}>
-          <h1 className={styles.number}>$10,000</h1>
-          <p className={styles.p}>total sales </p>
-        </div>
-        <div className={styles.box}>
-          <h1 className={styles.number}>$1,500</h1>
-          <p className={styles.p}>total revenue resales </p>
-        </div>
-        <div className={styles.box}>
-          <h1 className={styles.number}>334</h1>
-          <p className={styles.p}>tickets sold </p>
-        </div>
+      <h1>dashboard</h1>
+      <div className={styles.metriccontainer}>
+        <Metric value={toCurrency(total)} label="in total sales" />
+        <Metric value={toCurrency(resale)} label="in resale profit" />
+        <Metric value={tickets.toString()} label="total tickets sold" />
       </div>
       <Listings listings={saleListings} />
       <Listings listings={resaleListings} isResale />
     </div>
+  );
+};
+
+const Metric: React.FC<{ value: string; label: string }> = ({
+  value,
+  label,
+}) => {
+  return (
+    <section className={styles.box}>
+      <h2 className={styles.metricvalue}>{value}</h2>
+      <div className={styles.metriclabel}>{label}</div>
+    </section>
   );
 };
 
@@ -55,22 +75,44 @@ const Listings: React.FC<{ listings: Listing[]; isResale?: boolean }> = ({
 }) => {
   return listings.length > 0 ? (
     <div>
-      <h1>my {isResale ? 'resale ' : ''}listings</h1>
-      {listings.map((l: Listing) => (
-        <ListingRow listing={l} />
-      ))}
+      <h1 className={styles.listingtitle}>
+        my {isResale ? 'resale ' : ''}listings
+      </h1>
+      <div className={styles.listingcontainer}>
+        {listings.map((l: Listing) => (
+          <ListingRow listing={l} />
+        ))}
+      </div>
     </div>
   ) : null;
 };
 
 const ListingRow: React.FC<{ listing: Listing }> = ({ listing }) => {
+  const { data } = useGetEventInfo(listing.ticketId.toString());
+  const toUSD = useGetPriceInUsd();
+
+  console.log(data);
+
+  if (!data) {
+    return null;
+  }
+
   return (
-    <section className={styles.listingContainer}>
-      <h3>
-        ticket: {listing.ticketId.toString()}, supply left: {listing.supplyLeft}
-      </h3>
-      <h3>price: {listing.priceInWei.toString()}</h3>
-    </section>
+    <>
+      <section className={styles.listing}>
+        <TicketInfo eventId={listing.ticketId.toString()} />
+        <div>
+          <div className={styles.count}>{listing.supplyLeft}</div>
+          tickets remaining
+        </div>
+        <div>
+          <div className={styles.count}>
+            {toCurrency(parseFloat(toUSD(listing.priceInWei)))}
+          </div>
+          original price
+        </div>
+      </section>
+    </>
   );
 };
 

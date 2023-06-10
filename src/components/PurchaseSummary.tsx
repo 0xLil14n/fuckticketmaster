@@ -42,10 +42,11 @@ const PurchaseSummary: React.FC<{
   } = usePurchaseResaleTicket(ticketId);
 
   const handleSubmit = () => {
+    console.log('priceWei', priceWei * (quantity as unknown as bigint));
     if (isResale) {
       purchaseResale(listedById, quantity, priceWei);
     } else {
-      purchaseTicket(quantity, priceWei as bigint);
+      purchaseTicket(quantity, priceWei * (quantity as unknown as bigint));
     }
   };
 

@@ -6,6 +6,7 @@ import { ABI, SEPOLIA_ADDR } from '../../../contractdetails';
 import SubmitButton from '@/components/Form/SubmitButton';
 import Input from '@/components/Form/Input';
 import ErrorMessage from '@/components/Form/ErrorMessage';
+import { dateInSecs } from '@/utils/date';
 
 type Props<T> = {
   id: string;
@@ -15,33 +16,10 @@ type Props<T> = {
   onChange: (_: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const FormInput: React.FC<Props<string | number>> = ({
-  placeholder,
-  id,
-  value,
-  onChange,
-  label,
-}): JSX.Element => {
-  return (
-    <div>
-      <input
-        className={styles.input}
-        required
-        name={id}
-        id={id}
-        value={value}
-        placeholder={placeholder}
-        onChange={onChange}
-        pattern="[[\w]+[\s]*]+"
-      />
-      <label htmlFor={id}>{label}</label>
-    </div>
-  );
-};
-
 const Listing = () => {
   const [eventName, setEventName] = useState('');
   const [maxSupply, setMaxSupply] = useState(0);
+  const [isPresale, setIsPresale] = useState(false);
 
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -49,16 +27,20 @@ const Listing = () => {
   const [priceInWei, setPriceInWei] = useState<BigInt | null>(null);
   const [venueName, setVenueName] = useState('');
 
+  const [presaleStartDate, setPresaleStartDate] = useState(0);
+  const [presaleCloseDate, setPresaleCloseDate] = useState(0);
+
   const [maxSupplyError, setMaxSupplyError] = useState(false);
   const [eventNameError, setEventNameError] = useState(false);
   const [priceError, setPriceError] = useState(false);
   const [timeError, setTimeError] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [venueNameError, setVenueNameError] = useState(false);
+  const [hasPresaleError, setHasPresaleError] = useState(false);
 
   const dateTime = `${date} ${time}`;
   const {
-    data: resaleData,
+    data: createTicketData,
     write,
     isLoading,
     isSuccess,
@@ -71,9 +53,36 @@ const Listing = () => {
     args: [maxSupply, priceInWei, eventName, dateTime, venueName],
   });
 
-  const { data: txnReceipt, isSuccess: txSuccess } = useWaitForTransaction({
-    hash: resaleData?.hash,
+  const { data: txnReceipt, isSuccess: createTicketTxSuccess } =
+    useWaitForTransaction({
+      hash: createTicketData?.hash,
+    });
+
+  const {
+    data: createPresaleData,
+    write: createPresale,
+    isLoading: isCreatePresaleLoading,
+    isSuccess: isCreatePresaleSuccess,
+    isError: isCreatePresaleError,
+  } = useContractWrite({
+    address: SEPOLIA_ADDR,
+    abi: ABI,
+    functionName: 'createPresale',
+
+    args: [
+      maxSupply,
+      priceInWei,
+      eventName,
+      dateTime,
+      venueName,
+      presaleStartDate,
+      presaleCloseDate,
+    ],
   });
+  const { data: presaleTxnReceipt, isSuccess: createPresaleTxSuccess } =
+    useWaitForTransaction({
+      hash: createPresaleData?.hash,
+    });
 
   useEffect(() => {
     (async () => {
@@ -111,7 +120,19 @@ const Listing = () => {
       setTimeError(true);
       return;
     }
-
+    if (
+      isPresale &&
+      (!presaleStartDate ||
+        !presaleCloseDate ||
+        presaleStartDate >= presaleCloseDate)
+    ) {
+      setHasPresaleError(true);
+      return;
+    }
+    if (isPresale) {
+      createPresale();
+      return;
+    }
     write?.();
   };
 
@@ -131,7 +152,6 @@ const Listing = () => {
             hasError={eventNameError}
             errorMessage="Event Name required."
           />
-
           <Input
             label="Max Supply"
             onChange={(e) => {
@@ -142,7 +162,6 @@ const Listing = () => {
             hasError={maxSupplyError}
             errorMessage="Please enter valid max supply."
           />
-
           <Input
             label="Price (USD)"
             onChange={(e) => {
@@ -155,7 +174,9 @@ const Listing = () => {
           />
           <Input
             label="Venue Name"
+            type="text"
             onChange={(e) => {
+              console.log('venue name', e.target.value);
               setVenueName(e.target.value);
               setVenueNameError(false);
             }}
@@ -163,7 +184,6 @@ const Listing = () => {
             hasError={venueNameError}
             errorMessage="Please enter a valid venue name."
           />
-
           <Input
             value={date}
             type="date"
@@ -194,15 +214,154 @@ const Listing = () => {
             {timeError && <ErrorMessage errorMessage="Select a time." />}
           </div>
 
+          <PresaleForm
+            isPresale={isPresale}
+            setIsPresale={setIsPresale}
+            setPresaleCloseDate={setPresaleCloseDate}
+            setPresaleStartDate={setPresaleStartDate}
+            hasPresaleError={hasPresaleError}
+            setHasPresaleError={setHasPresaleError}
+          />
           <SubmitButton
             handleSubmit={handleSubmit}
             label="Create Tickets"
             isDisabled={false}
           />
         </form>
+        {(createPresaleTxSuccess || createTicketTxSuccess) && (
+          <div className={styles.success}>ticket created successfully!</div>
+        )}
       </div>
     </div>
   );
 };
 
+type PresaleProps = {
+  isPresale: boolean;
+  setIsPresale: (_: boolean) => void;
+  setPresaleStartDate: (_: number) => void;
+  setPresaleCloseDate: (_: number) => void;
+  hasPresaleError: boolean;
+  setHasPresaleError: (_: boolean) => void;
+};
+
+const PresaleForm: React.FC<PresaleProps> = ({
+  isPresale,
+  setIsPresale,
+  setPresaleStartDate,
+  setPresaleCloseDate,
+  hasPresaleError,
+  setHasPresaleError,
+}) => {
+  const [startDate, setStartDate] = useState('');
+  const [closeDate, setCloseDate] = useState('');
+  const presaleErrorMessage = 'Invalid presale dates.';
+  return (
+    <>
+      <div className={styles.checkboxContainer}>
+        <input
+          type="checkbox"
+          checked={isPresale}
+          onChange={() => {
+            setIsPresale(!isPresale);
+          }}
+        />
+        <label>Is Presale</label>
+      </div>
+      {isPresale && (
+        <div className={styles.dateComponent}>
+          <Input
+            value={startDate}
+            label="Presale Start Date"
+            type="datetime-local"
+            onChange={(e) => {
+              setPresaleStartDate(dateInSecs(e.target.value));
+              setStartDate(e.target.value);
+              setHasPresaleError(false);
+            }}
+            hasError={hasPresaleError}
+            errorMessage={presaleErrorMessage}
+          />
+          <Input
+            value={closeDate}
+            label="Presale Close Date"
+            type="datetime-local"
+            onChange={(e) => {
+              setPresaleCloseDate(dateInSecs(e.target.value));
+              setCloseDate(e.target.value);
+              setHasPresaleError(false);
+            }}
+            hasError={hasPresaleError}
+            errorMessage={presaleErrorMessage}
+          />
+        </div>
+      )}
+    </>
+  );
+};
+
+const DateComponent: React.FC<{
+  label: string;
+  setDateTime: (_: number) => void;
+}> = ({ label, setDateTime }) => {
+  const [date, setDate] = useState('');
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+  useEffect(() => {
+    if (date.split('-').length <= 1) {
+      return;
+    }
+    const [year, month, day] = date.split('-');
+    const monthIndex = parseInt(month) - 1;
+    console.log('asdf', date.split('-'));
+    const startDate = new Date(
+      parseInt(year),
+      monthIndex,
+      parseInt(day),
+      hour,
+      minute
+    );
+    console.log('start Date', startDate);
+    setDateTime(dateInSecs(startDate.toString()));
+  }, [hour, minute, date]);
+  return (
+    <div>
+      <Input
+        value={date}
+        type="date"
+        label={label}
+        onChange={(e) => {
+          setDate(e.target.value);
+        }}
+        // hasError={dateError}
+        errorMessage="Please enter a start time."
+      />
+      <div className={styles.checkboxContainer}>
+        <TimeInput
+          label="Hour"
+          onChange={(e) => setHour(parseInt(e.target.value))}
+          value={hour}
+        />
+        <TimeInput
+          label="Minute"
+          onChange={(e) => setMinute(parseInt(e.target.value))}
+          value={minute}
+        />
+      </div>
+    </div>
+  );
+};
+
+const TimeInput: React.FC<{
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: number;
+  label: string;
+}> = ({ onChange, value, label }) => {
+  return (
+    <div className={styles.timeInput}>
+      <label>{label}</label>
+      <input type="number" min={0} value={value} step={1} onChange={onChange} />
+    </div>
+  );
+};
 export default Listing;

@@ -12,11 +12,11 @@ const usePurchaseTicket = (ticketId: number) => {
   } = useContractWrite({
     address: SEPOLIA_ADDR,
     abi: ABI,
-    functionName: 'publicMint',
+    functionName: 'mint',
   });
   return {
     purchaseTicket: (qty: number, totalPrice: bigint) => {
-      purchaseTicket({ args: [ticketId, qty], value: totalPrice });
+      purchaseTicket({ args: [ticketId, qty], value: BigInt(totalPrice) });
     },
     isLoading,
     isError,

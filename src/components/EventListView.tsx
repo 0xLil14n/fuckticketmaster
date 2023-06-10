@@ -1,15 +1,24 @@
 import Link from 'next/link';
 import styles from './EventListView.module.css';
 import { Listing } from './resaleTicket';
+import PresaleBadge from './PresaleBadge';
 
 type Event = {
   eventName: string;
   date: string;
   venueName: string;
   id: string;
+  presale: Presale;
 };
+
+type Presale = {
+  startTime: number;
+  endTime: number;
+  state: number;
+};
+
 const EventListView: React.FC<{ event: Event }> = ({ event }) => {
-  const { eventName, date, venueName, id: eventId } = event;
+  const { eventName, date, venueName, id: eventId, presale } = event;
 
   return (
     <div className={styles.container}>
@@ -18,9 +27,10 @@ const EventListView: React.FC<{ event: Event }> = ({ event }) => {
         <p>
           {date} | {venueName}
         </p>
+        {presale && <PresaleBadge />}
       </div>
       <Link className={styles.linkButton} href={`/browse/${eventId}`}>
-        TICKETS
+        {presale ? 'PRESALE' : 'BUY TICKETS'}
       </Link>
     </div>
   );

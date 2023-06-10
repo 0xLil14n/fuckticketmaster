@@ -2,7 +2,8 @@
 pragma solidity ^0.8.7;
 
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
-import "contract-9d8b91b7db.sol";
+
+import "FuckTicketmaster.sol";
 
 contract Presale is AutomationCompatibleInterface {
     
@@ -19,16 +20,18 @@ contract Presale is AutomationCompatibleInterface {
 
     event PresaleOpened(uint eventId);
     event PresaleClosed(uint eventId);
-    /**
-     * Use an interval in seconds and a timestamp to slow execution of Upkeep
-     */
-    uint public immutable interval;
-    uint public lastTimeStamp;
+    FckTcktmstr public ftm;
     
+    address public _owner;
+    address public _factory;
 
-    constructor(uint updateInterval) {
-        interval = updateInterval;
-        lastTimeStamp = block.timestamp;
+    constructor(address owner, uint256 _eventId, uint256 _presaleStart, uint256 _presaleClose) {
+        eventId = _eventId;
+        presaleStartTime = _presaleStart;
+        presaleCloseTime = _presaleClose;
+        _owner = owner;
+        _factory = msg.sender;
+        ftm = FckTcktmstr(msg.sender);
     }
 
     function shouldOpen() public view returns (bool) {
@@ -36,6 +39,18 @@ contract Presale is AutomationCompatibleInterface {
     }
     function shouldClose() public view returns (bool) {
         return eventPresaleState == PresaleState.Open && block.timestamp >= presaleCloseTime;
+    }
+    function needsUpkeep() public view returns(bool) {
+        return shouldOpen() || shouldClose();
+    }
+    
+    function updatePresaleState() public returns (PresaleState) {
+        if (eventPresaleState == PresaleState.Pending) {
+            eventPresaleState = PresaleState.Open;
+        } else if (eventPresaleState == PresaleState.Open) {
+            eventPresaleState = PresaleState.Closed;
+        }
+        return eventPresaleState;
     }
 
     function checkUpkeep(
@@ -55,6 +70,20 @@ contract Presale is AutomationCompatibleInterface {
 
     }
 
+    
+    function isEligibleForSale(address id) public view returns (bool) {
+        if (eventPresaleState == PresaleState.Closed) {
+            // presale is over, open sale
+            return true;
+        } 
+        if(eventPresaleState == PresaleState.Pending) {
+            // sale has not started yet
+            return false;
+        }
+        // otherwise it's open
+        return isEligibleForPresale[id];
+    }
+
 
     function performUpkeep(bytes calldata performData ) external override {
         (bool openPresale, bool closePresale) = abi.decode(performData, (bool, bool));
@@ -70,9 +99,10 @@ contract Presale is AutomationCompatibleInterface {
 
     function addToPresale() public {
         require(eventPresaleState == PresaleState.Pending, "Presale Queue is closed.");
-        require(presaleStartTime < block.timestamp, "Presale Queue is closed.");
+        require(ftm.getReputationScore(msg.sender) >= 50);
         isEligibleForPresale[msg.sender] = true;
     }
+
     function updateStartAndEndTime(uint256 startTime, uint256 endTime) public {
         require(startTime >= block.timestamp, "Start time must be in the future");
         require(endTime >= block.timestamp, "End time must be in the future");
