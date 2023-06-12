@@ -2,6 +2,7 @@ import useGetPriceInUsd from '@/hooks/useGetPriceInUsd';
 import RadioRow from './RadioRow';
 import { useEffect, useState } from 'react';
 import styles from './RadioListings.module.css';
+import { Listing } from './resaleTicket';
 
 const RadioListings: React.FC<{
   listings: Listing[];
@@ -10,7 +11,7 @@ const RadioListings: React.FC<{
   const getPriceInUsd = useGetPriceInUsd();
 
   useEffect(() => {
-    setSelectedListingId(listings.find((l) => !l.isResale).id);
+    setSelectedListingId(listings.find((l) => !l.isResale)?.id ?? '0');
   }, []);
 
   const [checked, setChecked] = useState(0);

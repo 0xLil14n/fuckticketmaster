@@ -9,7 +9,7 @@ const PurchaseHistoryListView: React.FC<{ ticketIds: string[] }> = ({
   return (
     <div className={styles.purchaseHistory}>
       {ticketIds.map((id) => (
-        <PurchaseRow eventId={id} />
+        <PurchaseRow key={id} eventId={id} />
       ))}
     </div>
   );

@@ -19,6 +19,7 @@ const ResaleView: React.FC<{
       <div className={styles.listContainer}>
         {ticketIds.map((ticketId, i) => (
           <RadioRowView
+            key={ticketId}
             label={'label'}
             radioId="resaleTicket"
             onClick={() => {

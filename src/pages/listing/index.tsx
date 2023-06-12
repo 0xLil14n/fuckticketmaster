@@ -208,7 +208,11 @@ const Listing = () => {
               <option value="">--select time--</option>
               {[...new Array(9).keys()].map((i) => {
                 const timeString = `${3 + i}:00pm`;
-                return <option value={timeString}>{timeString}</option>;
+                return (
+                  <option key={i} value={timeString}>
+                    {timeString}
+                  </option>
+                );
               })}
             </select>
             {timeError && <ErrorMessage errorMessage="Select a time." />}

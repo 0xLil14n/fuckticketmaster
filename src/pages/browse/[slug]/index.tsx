@@ -106,7 +106,7 @@ const PresaleOpenView: React.FC<{
             flexDirection: 'column',
           }}
         >
-          <h1>Uh oh, looks like you're not in the Presale Queue! </h1>
+          <h1>Uh oh, looks like you&apos;re not in the Presale Queue! </h1>
           <h2>
             Come back{' '}
             <b style={{ color: 'var(--good-green)' }}>
@@ -117,7 +117,7 @@ const PresaleOpenView: React.FC<{
           <p>
             Presale is only available to those who signed up for the presale
             queue. Must be in presale queue to access sale. If you should be in
-            the presale, please check that you're using the same wallet you
+            the presale, please check that you&apos;re using the same wallet you
             signed up with.
           </p>
 
@@ -168,8 +168,8 @@ const PresaleSignUpView: React.FC<{
             color: 'black',
           }}
         >
-          You've already signed up for this presale! Come back {startDate} at{' '}
-          {time} for the sale.
+          You&apos;ve already signed up for this presale! Come back {startDate}{' '}
+          at {time} for the sale.
         </div>
       )}
       {Boolean(rep < 50) && (
@@ -180,7 +180,7 @@ const PresaleSignUpView: React.FC<{
             color: 'black',
           }}
         >
-          You're currently ineligible to sign up for presale queues.
+          You&apos;re currently ineligible to sign up for presale queues.
         </div>
       )}
       <h1>

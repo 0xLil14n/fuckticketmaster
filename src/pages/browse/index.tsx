@@ -20,7 +20,7 @@ const query = gql`
   }
 `;
 
-const catalog = () => {
+const Catalog: React.FC = () => {
   const { data: session } = useSession();
   const { data, loading } = useQuery(query, {});
 
@@ -30,11 +30,11 @@ const catalog = () => {
     <div className={styles.container}>
       {session &&
         listings.map((listing) => {
-          return <EventListItem listing={listing} />;
+          return <EventListItem key={listing.id} listing={listing} />;
         })}
       {!session && <div>Please sign in </div>}
     </div>
   );
 };
 
-export default catalog;
+export default Catalog;

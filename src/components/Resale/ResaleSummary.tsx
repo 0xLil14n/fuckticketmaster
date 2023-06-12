@@ -106,7 +106,7 @@ const ResaleSummary: React.FC<{
             </option>
             {ticketsArr.map((i) => {
               return (
-                <option value={i}>
+                <option key={i} value={i}>
                   {i} ticket{i > 1 ? 's' : ''}
                 </option>
               );

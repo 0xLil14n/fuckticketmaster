@@ -80,7 +80,7 @@ const Listings: React.FC<{ listings: Listing[]; isResale?: boolean }> = ({
       </h1>
       <div className={styles.listingcontainer}>
         {listings.map((l: Listing) => (
-          <ListingRow listing={l} />
+          <ListingRow key={l.id} listing={l} />
         ))}
       </div>
     </div>

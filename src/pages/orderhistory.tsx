@@ -1,11 +1,14 @@
-import { Ticket } from '@/components/order';
-
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import PurchaseHistory from '@/components/PurchaseHistory';
 import useGetTicketsForUser from '@/hooks/useGetTicketsForUser';
+
+export type Ticket = {
+  id: string;
+  ticketId: string;
+};
 
 type Ticket2 = {
   ticketId: string;
@@ -54,12 +57,7 @@ const OrderHistory: React.FC<Props> = ({ tickets }) => {
   }
   return (
     <div style={{ height: '100%', width: '900px' }}>
-      {/* <OrderHistoryContainer> */}
-      {/* {Object.entries(aggTix).map(([k, v]) => {
-          return <Order id={k} quantity={v.length} key={k} />;
-        })} */}
       <PurchaseHistory ticketIds={ticketIds} />
-      {/* </OrderHistoryContainer> */}
     </div>
   );
 };
