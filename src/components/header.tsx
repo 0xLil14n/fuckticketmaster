@@ -31,9 +31,11 @@ export default function Header() {
               <li className={styles.navItem}>
                 <Link href="/browse">browse</Link>
               </li>
-              <li className={styles.navItem}>
-                <Link href="/listing">list tickets</Link>
-              </li>
+              {session && (
+                <li className={styles.navItem}>
+                  <Link href="/listing">list tickets</Link>
+                </li>
+              )}
               <li className={styles.navItem}>
                 <Link href="/orderhistory">order history</Link>
               </li>

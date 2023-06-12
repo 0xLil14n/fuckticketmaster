@@ -7,6 +7,7 @@ import SubmitButton from '@/components/Form/SubmitButton';
 import Input from '@/components/Form/Input';
 import ErrorMessage from '@/components/Form/ErrorMessage';
 import { dateInSecs } from '@/utils/date';
+import { useSession } from 'next-auth/react';
 
 type Props<T> = {
   id: string;
@@ -37,7 +38,7 @@ const Listing = () => {
   const [dateError, setDateError] = useState(false);
   const [venueNameError, setVenueNameError] = useState(false);
   const [hasPresaleError, setHasPresaleError] = useState(false);
-
+  const { data: session, status } = useSession();
   const dateTime = `${date} ${time}`;
   const {
     data: createTicketData,
@@ -98,6 +99,9 @@ const Listing = () => {
     })();
   }, [priceUsd]);
   const min = new Date().toLocaleDateString('fr-ca');
+  if (!session) {
+    return <div> please log in</div>;
+  }
 
   const handleSubmit = () => {
     if (!eventName) {
@@ -304,68 +308,4 @@ const PresaleForm: React.FC<PresaleProps> = ({
   );
 };
 
-const DateComponent: React.FC<{
-  label: string;
-  setDateTime: (_: number) => void;
-}> = ({ label, setDateTime }) => {
-  const [date, setDate] = useState('');
-  const [hour, setHour] = useState(0);
-  const [minute, setMinute] = useState(0);
-  useEffect(() => {
-    if (date.split('-').length <= 1) {
-      return;
-    }
-    const [year, month, day] = date.split('-');
-    const monthIndex = parseInt(month) - 1;
-    console.log('asdf', date.split('-'));
-    const startDate = new Date(
-      parseInt(year),
-      monthIndex,
-      parseInt(day),
-      hour,
-      minute
-    );
-    console.log('start Date', startDate);
-    setDateTime(dateInSecs(startDate.toString()));
-  }, [hour, minute, date]);
-  return (
-    <div>
-      <Input
-        value={date}
-        type="date"
-        label={label}
-        onChange={(e) => {
-          setDate(e.target.value);
-        }}
-        // hasError={dateError}
-        errorMessage="Please enter a start time."
-      />
-      <div className={styles.checkboxContainer}>
-        <TimeInput
-          label="Hour"
-          onChange={(e) => setHour(parseInt(e.target.value))}
-          value={hour}
-        />
-        <TimeInput
-          label="Minute"
-          onChange={(e) => setMinute(parseInt(e.target.value))}
-          value={minute}
-        />
-      </div>
-    </div>
-  );
-};
-
-const TimeInput: React.FC<{
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  value: number;
-  label: string;
-}> = ({ onChange, value, label }) => {
-  return (
-    <div className={styles.timeInput}>
-      <label>{label}</label>
-      <input type="number" min={0} value={value} step={1} onChange={onChange} />
-    </div>
-  );
-};
 export default Listing;
